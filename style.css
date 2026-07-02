@@ -749,39 +749,19 @@ a.contact-method-item:hover {
     text-align: center;
 }
 
-/* Lightbox video notice */
-.lightbox-notice {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    padding: 50px 40px;
-    border-radius: 8px;
-    text-align: center;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+/* Lightbox video iframe container */
+#lightbox-video-container {
+    width: 80vw;
+    max-width: 900px;
+    aspect-ratio: 16/9;
 }
 
-.notice-icon {
-    font-size: 3rem;
-    color: var(--accent);
-}
-
-.notice-text {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--text-primary);
-}
-
-.notice-sub {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-}
-
-.btn-sm {
-    padding: 10px 20px;
-    font-size: 0.8rem;
+#lightbox-iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    background-color: #000;
 }
 
 /* 11. Footer */

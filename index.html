@@ -74,7 +74,7 @@
             
             <div class="projects-grid">
                 <!-- Cinema Projects -->
-                <article class="project-card filter-item" data-category="cinema">
+                <article class="project-card filter-item" data-category="cinema" data-video-id="xAbP0Tb6KU0">
                     <div class="project-visual video-placeholder-card">
                         <i class="fa-solid fa-play play-icon-overlay"></i>
                         <div class="video-badge">CORTOMETRAGGIO</div>
@@ -84,11 +84,11 @@
                     <div class="project-info">
                         <span class="project-category">Cinematografia / Short Film</span>
                         <h3 class="project-name">A Chess Move (Taoprod)</h3>
-                        <p class="project-description">Direzione della fotografia per corto cinematografico drammatico. (File video originale sul tuo PC: 1.1GB)</p>
+                        <p class="project-description">Direzione della fotografia per corto cinematografico drammatico.</p>
                     </div>
                 </article>
 
-                <article class="project-card filter-item" data-category="cinema">
+                <article class="project-card filter-item" data-category="cinema" data-video-id="LDUSHwS_K_g">
                     <div class="project-visual video-placeholder-card">
                         <i class="fa-solid fa-play play-icon-overlay"></i>
                         <div class="video-badge">CORTOMETRAGGIO</div>
@@ -97,7 +97,7 @@
                     <div class="project-info">
                         <span class="project-category">Cinematografia / Short Film</span>
                         <h3 class="project-name">Corto Personale</h3>
-                        <p class="project-description">Lavoro di cinematografia personale, esperimento di composizione e colore. (File video originale sul tuo PC: 560MB)</p>
+                        <p class="project-description">Lavoro di cinematografia personale, esperimento di composizione e colore.</p>
                     </div>
                 </article>
 
@@ -303,17 +303,9 @@
         <div class="lightbox-content">
             <!-- Dynamic Image Content -->
             <img src="" alt="" id="lightbox-img" class="lightbox-media active">
-            <!-- Dynamic Video/Notice Content -->
+            <!-- Dynamic Video/Iframe Content -->
             <div id="lightbox-video-container" class="lightbox-media">
-                <div class="lightbox-notice">
-                    <i class="fa-solid fa-clapperboard notice-icon"></i>
-                    <h3 id="lightbox-video-title">Titolo Cortometraggio</h3>
-                    <p class="notice-text">I file video originali dei cortometraggi (da 560MB e 1.1GB) sono troppo grandi per essere ospitati su GitHub Pages, che impone un limite di 100MB per file.</p>
-                    <p class="notice-sub">Per mostrare qui il corto, caricalo su **Vimeo** o **YouTube** e inserisci l'indirizzo nel codice per poterlo integrare con un player integrato.</p>
-                    <div class="notice-action">
-                        <a href="#contact" class="btn btn-primary btn-sm" id="lightbox-video-contact">Contattami per info</a>
-                    </div>
-                </div>
+                <iframe id="lightbox-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
         </div>
         <div class="lightbox-caption" id="lightbox-caption">Dettagli Immagine</div>

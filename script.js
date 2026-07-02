@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxNext = document.getElementById('lightbox-next');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxVideoContainer = document.getElementById('lightbox-video-container');
-    const lightboxVideoTitle = document.getElementById('lightbox-video-title');
+    const lightboxIframe = document.getElementById('lightbox-iframe');
     const lightboxCaption = document.getElementById('lightbox-caption');
 
     // Get only visible/filtered photo elements for navigation
@@ -104,10 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
             lightboxPrev.style.display = 'none';
             lightboxNext.style.display = 'none';
             
-            // Show video notice
-            lightboxVideoTitle.textContent = data.title;
+            // Set iframe src for YouTube video
+            lightboxIframe.src = `https://www.youtube.com/embed/${data.videoId}?autoplay=1`;
             lightboxVideoContainer.classList.add('active');
-            lightboxCaption.textContent = 'Cinematografia / Cortometraggio';
+            lightboxCaption.textContent = data.title;
         }
 
         lightboxModal.classList.add('active');
@@ -117,6 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeLightbox = () => {
         lightboxModal.classList.remove('active');
         document.body.style.overflow = '';
+        // Stop YouTube video playback by clearing src
+        lightboxIframe.src = '';
     };
 
     // Attach click events to project cards
@@ -143,8 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             } else if (category === 'cinema') {
                 const videoTitle = card.querySelector('.project-name').textContent;
+                const videoId = card.getAttribute('data-video-id');
                 openLightbox('video', {
-                    title: videoTitle
+                    title: videoTitle,
+                    videoId: videoId
                 });
             }
         });
