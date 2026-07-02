@@ -38,33 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Gallery Filtering
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const filterItems = document.querySelectorAll('.filter-item');
 
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active class from all buttons and add to clicked
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-
-            const filterValue = button.getAttribute('data-filter');
-
-            filterItems.forEach(item => {
-                const category = item.getAttribute('data-category');
-                
-                if (filterValue === 'all') {
-                    item.classList.remove('hide');
-                } else if (filterValue === 'photo' && category === 'photo') {
-                    item.classList.remove('hide');
-                } else if (filterValue === 'cinema' && category === 'cinema') {
-                    item.classList.remove('hide');
-                } else {
-                    item.classList.add('hide');
-                }
-            });
-        });
-    });
 
     // 4. Lightbox Modal for Photos & Videos
     const lightboxModal = document.getElementById('lightbox-modal');
@@ -81,8 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPhotoIndex = 0;
 
     const updatePhotoItemsList = () => {
-        // Collect all photo items that are currently not hidden
-        photoItems = Array.from(document.querySelectorAll('.filter-item[data-category="photo"]:not(.hide)'));
+        photoItems = Array.from(document.querySelectorAll('.project-card[data-category="photo"]'));
     };
 
     const openLightbox = (type, data) => {

@@ -20,7 +20,8 @@
         <a href="#" class="logo">ORLANDO COSTI<span>VISUALS</span></a>
         <nav class="nav-links">
             <a href="#showreel" class="nav-link">Showreel</a>
-            <a href="#projects" class="nav-link">Lavori</a>
+            <a href="#cinema" class="nav-link">Cinema</a>
+            <a href="#photography" class="nav-link">Fotografia</a>
             <a href="#about" class="nav-link">Chi Sono</a>
             <a href="#contact" class="nav-link">Contatti</a>
         </nav>
@@ -39,7 +40,7 @@
                 <p class="hero-desc">Direzione artistica, cinematografia e fotografia d'autore per brand, cinema e progetti musicali.</p>
                 <div class="hero-cta">
                     <a href="#showreel" class="btn btn-primary">Guarda lo Showreel</a>
-                    <a href="#projects" class="btn btn-secondary">Vedi Progetti</a>
+                    <a href="#cinema" class="btn btn-secondary">Vedi Cortometraggi</a>
                 </div>
             </div>
         </section>
@@ -51,35 +52,27 @@
                 <h2 class="section-title">Showreel Recente</h2>
             </div>
             <div class="video-container">
-                <video class="portfolio-video" controls poster="assets/photography/1.webp" preload="metadata">
+                <video class="portfolio-video" controls poster="assets/covers/beach_cover.png" preload="metadata">
                     <source src="assets/reels/reel_tombola.mp4" type="video/mp4">
                     Il tuo browser non supporta la riproduzione di questo video.
                 </video>
             </div>
         </section>
 
-        <!-- Projects Gallery -->
-        <section class="projects" id="projects">
+        <!-- Cinema Section -->
+        <section class="cinema-section" id="cinema">
             <div class="section-header">
-                <span class="section-label">02 / PORTFOLIO</span>
-                <h2 class="section-title">Lavori & Progetti</h2>
-            </div>
-
-            <!-- Filters -->
-            <div class="gallery-filters">
-                <button class="filter-btn active" data-filter="all">Tutti</button>
-                <button class="filter-btn" data-filter="photo">Fotografia</button>
-                <button class="filter-btn" data-filter="cinema">Cinema & Cortometraggi</button>
+                <span class="section-label">02 / CINEMATOGRAFIA</span>
+                <h2 class="section-title">Cortometraggi</h2>
             </div>
             
-            <div class="projects-grid">
+            <div class="projects-grid cinema-grid">
                 <!-- Cinema Projects -->
-                <article class="project-card filter-item" data-category="cinema" data-video-id="xAbP0Tb6KU0">
+                <article class="project-card" data-category="cinema" data-video-id="xAbP0Tb6KU0">
                     <div class="project-visual video-placeholder-card">
                         <i class="fa-solid fa-play play-icon-overlay"></i>
                         <div class="video-badge">CORTOMETRAGGIO</div>
-                        <!-- We use one of the converted photos as a cover for the short film -->
-                        <img src="assets/photography/3.webp" alt="A Chess Move Cover" class="project-img-bg">
+                        <img src="assets/covers/chessboard_cover.png" alt="A Chess Move Cover" class="project-img-bg">
                     </div>
                     <div class="project-info">
                         <span class="project-category">Cinematografia / Short Film</span>
@@ -88,22 +81,32 @@
                     </div>
                 </article>
 
-                <article class="project-card filter-item" data-category="cinema" data-video-id="LDUSHwS_K_g">
+                <article class="project-card" data-category="cinema" data-video-id="LDUSHwS_K_g">
                     <div class="project-visual video-placeholder-card">
                         <i class="fa-solid fa-play play-icon-overlay"></i>
                         <div class="video-badge">CORTOMETRAGGIO</div>
-                        <img src="assets/photography/6.webp" alt="Corto Personale Cover" class="project-img-bg">
+                        <img src="assets/covers/beach_cover.png" alt="Terminal Dream Cover" class="project-img-bg">
                     </div>
                     <div class="project-info">
                         <span class="project-category">Cinematografia / Short Film</span>
-                        <h3 class="project-name">Corto Personale</h3>
+                        <h3 class="project-name">Terminal Dream</h3>
                         <p class="project-description">Lavoro di cinematografia personale, esperimento di composizione e colore.</p>
                     </div>
                 </article>
+            </div>
+        </section>
 
+        <!-- Photography Section -->
+        <section class="photography-section" id="photography">
+            <div class="section-header">
+                <span class="section-label">03 / FOTOGRAFIA</span>
+                <h2 class="section-title">Progetti Fotografici</h2>
+            </div>
+            
+            <div class="projects-grid photography-grid">
                 <!-- Photography Projects (1 to 10) -->
                 <!-- 1 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/1.webp">
                         <img src="assets/photography/1.webp" alt="Progetto Fotografico - Scatto 1" loading="lazy">
                     </div>
@@ -114,7 +117,7 @@
                     </div>
                 </article>
                 <!-- 2 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/2.webp">
                         <img src="assets/photography/2.webp" alt="Progetto Fotografico - Scatto 2" loading="lazy">
                     </div>
@@ -125,7 +128,7 @@
                     </div>
                 </article>
                 <!-- 3 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/3.webp">
                         <img src="assets/photography/3.webp" alt="Progetto Fotografico - Scatto 3" loading="lazy">
                     </div>
@@ -136,7 +139,7 @@
                     </div>
                 </article>
                 <!-- 4 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/4.webp">
                         <img src="assets/photography/4.webp" alt="Progetto Fotografico - Scatto 4" loading="lazy">
                     </div>
@@ -147,7 +150,7 @@
                     </div>
                 </article>
                 <!-- 5 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/5.webp">
                         <img src="assets/photography/5.webp" alt="Progetto Fotografico - Scatto 5" loading="lazy">
                     </div>
@@ -158,7 +161,7 @@
                     </div>
                 </article>
                 <!-- 6 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/6.webp">
                         <img src="assets/photography/6.webp" alt="Progetto Fotografico - Scatto 6" loading="lazy">
                     </div>
@@ -169,7 +172,7 @@
                     </div>
                 </article>
                 <!-- 7 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/7.webp">
                         <img src="assets/photography/7.webp" alt="Progetto Fotografico - Scatto 7" loading="lazy">
                     </div>
@@ -180,7 +183,7 @@
                     </div>
                 </article>
                 <!-- 8 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/8.webp">
                         <img src="assets/photography/8.webp" alt="Progetto Fotografico - Scatto 8" loading="lazy">
                     </div>
@@ -191,7 +194,7 @@
                     </div>
                 </article>
                 <!-- 9 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/9.webp">
                         <img src="assets/photography/9.webp" alt="Progetto Fotografico - Scatto 9" loading="lazy">
                     </div>
@@ -202,7 +205,7 @@
                     </div>
                 </article>
                 <!-- 10 -->
-                <article class="project-card filter-item" data-category="photo">
+                <article class="project-card" data-category="photo">
                     <div class="project-visual photo-item" data-src="assets/photography/10.webp">
                         <img src="assets/photography/10.webp" alt="Progetto Fotografico - Scatto 10" loading="lazy">
                     </div>
@@ -218,7 +221,7 @@
         <!-- About Section -->
         <section class="about" id="about">
             <div class="section-header">
-                <span class="section-label">03 / FILOSOFIA & BIO</span>
+                <span class="section-label">04 / FILOSOFIA & BIO</span>
                 <h2 class="section-title">Chi Sono</h2>
             </div>
             <div class="about-content">
@@ -252,7 +255,7 @@
         <!-- Contact Section -->
         <section class="contact" id="contact">
             <div class="section-header">
-                <span class="section-label">04 / COLLABORAZIONI</span>
+                <span class="section-label">05 / COLLABORAZIONI</span>
                 <h2 class="section-title">Lavoriamo Insieme</h2>
             </div>
             <div class="contact-container">

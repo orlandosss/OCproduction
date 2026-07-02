@@ -333,6 +333,10 @@ section {
     transition: opacity 0.3s ease;
 }
 
+.photography-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 .project-card {
     display: flex;
     flex-direction: column;
@@ -811,6 +815,10 @@ a.contact-method-item:hover {
         grid-template-columns: 1fr;
         gap: 50px;
     }
+
+    .photography-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -826,7 +834,7 @@ a.contact-method-item:hover {
         display: flex;
     }
     
-    .projects-grid {
+    .projects-grid, .photography-grid {
         grid-template-columns: 1fr;
         gap: 30px;
     }
