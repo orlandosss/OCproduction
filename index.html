@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Orlando Costi Visuals - Portfolio di fotografia, cinematografia e arte visiva.">
+    <meta name="description" content="Orlando Costi Visuals - Portfolio di fotografia, cinematografia e direzione artistica.">
     <title>Orlando Costi Visuals | Portfolio</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,12 +14,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Background overlay for depth -->
     <div class="bg-grid"></div>
 
     <header class="main-header">
         <a href="#" class="logo">ORLANDO COSTI<span>VISUALS</span></a>
         <nav class="nav-links">
+            <a href="#showreel" class="nav-link">Showreel</a>
             <a href="#projects" class="nav-link">Lavori</a>
             <a href="#about" class="nav-link">Chi Sono</a>
             <a href="#contact" class="nav-link">Contatti</a>
@@ -35,68 +35,181 @@
         <section class="hero" id="hero">
             <div class="hero-content">
                 <p class="hero-tagline">DIRETTORE DELLA FOTOGRAFIA & FOTOGRAFO</p>
-                <h1 class="hero-title">Catturare l'essenza dell'istante attraverso la luce.</h1>
-                <p class="hero-desc">Creazione di narrazioni visive ed esperienze cinematografiche sospese nel tempo.</p>
+                <h1 class="hero-title">Raccontare storie attraverso la luce e il movimento.</h1>
+                <p class="hero-desc">Direzione artistica, cinematografia e fotografia d'autore per brand, cinema e progetti musicali.</p>
                 <div class="hero-cta">
-                    <a href="#projects" class="btn btn-primary">Esplora i Lavori</a>
-                    <a href="#contact" class="btn btn-secondary">Parliamo</a>
+                    <a href="#showreel" class="btn btn-primary">Guarda lo Showreel</a>
+                    <a href="#projects" class="btn btn-secondary">Vedi Progetti</a>
                 </div>
             </div>
         </section>
 
-        <!-- Projects Grid Section -->
+        <!-- Showreel Section -->
+        <section class="showreel-section" id="showreel">
+            <div class="section-header text-center">
+                <span class="section-label">01 / REELS</span>
+                <h2 class="section-title">Showreel Recente</h2>
+            </div>
+            <div class="video-container">
+                <video class="portfolio-video" controls poster="assets/photography/1.webp" preload="metadata">
+                    <source src="assets/reels/reel_tombola.mp4" type="video/mp4">
+                    Il tuo browser non supporta la riproduzione di questo video.
+                </video>
+            </div>
+        </section>
+
+        <!-- Projects Gallery -->
         <section class="projects" id="projects">
             <div class="section-header">
-                <span class="section-label">01 / PROGETTI SELEZIONATI</span>
-                <h2 class="section-title">Lavori Recenti</h2>
+                <span class="section-label">02 / PORTFOLIO</span>
+                <h2 class="section-title">Lavori & Progetti</h2>
+            </div>
+
+            <!-- Filters -->
+            <div class="gallery-filters">
+                <button class="filter-btn active" data-filter="all">Tutti</button>
+                <button class="filter-btn" data-filter="photo">Fotografia</button>
+                <button class="filter-btn" data-filter="cinema">Cinema & Cortometraggi</button>
             </div>
             
             <div class="projects-grid">
-                <!-- Project 1 -->
-                <article class="project-card">
-                    <div class="project-visual gradient-1">
-                        <span class="project-number">01</span>
+                <!-- Cinema Projects -->
+                <article class="project-card filter-item" data-category="cinema">
+                    <div class="project-visual video-placeholder-card">
+                        <i class="fa-solid fa-play play-icon-overlay"></i>
+                        <div class="video-badge">CORTOMETRAGGIO</div>
+                        <!-- We use one of the converted photos as a cover for the short film -->
+                        <img src="assets/photography/3.webp" alt="A Chess Move Cover" class="project-img-bg">
                     </div>
                     <div class="project-info">
-                        <span class="project-category">Cinematografia</span>
-                        <h3 class="project-name">Sussurri del Vento</h3>
-                        <p class="project-description">Un cortometraggio sperimentale sulla solitudine e sulla natura.</p>
+                        <span class="project-category">Cinematografia / Short Film</span>
+                        <h3 class="project-name">A Chess Move (Taoprod)</h3>
+                        <p class="project-description">Direzione della fotografia per corto cinematografico drammatico. (File video originale sul tuo PC: 1.1GB)</p>
                     </div>
                 </article>
 
-                <!-- Project 2 -->
-                <article class="project-card">
-                    <div class="project-visual gradient-2">
-                        <span class="project-number">02</span>
+                <article class="project-card filter-item" data-category="cinema">
+                    <div class="project-visual video-placeholder-card">
+                        <i class="fa-solid fa-play play-icon-overlay"></i>
+                        <div class="video-badge">CORTOMETRAGGIO</div>
+                        <img src="assets/photography/6.webp" alt="Corto Personale Cover" class="project-img-bg">
                     </div>
                     <div class="project-info">
-                        <span class="project-category">Fotografia Editoriale</span>
-                        <h3 class="project-name">Luci Urbane</h3>
-                        <p class="project-description">Studio fotografico sui contrasti di luce nelle periferie metropolitane.</p>
+                        <span class="project-category">Cinematografia / Short Film</span>
+                        <h3 class="project-name">Corto Personale</h3>
+                        <p class="project-description">Lavoro di cinematografia personale, esperimento di composizione e colore. (File video originale sul tuo PC: 560MB)</p>
                     </div>
                 </article>
 
-                <!-- Project 3 -->
-                <article class="project-card">
-                    <div class="project-visual gradient-3">
-                        <span class="project-number">03</span>
+                <!-- Photography Projects (1 to 10) -->
+                <!-- 1 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/1.webp">
+                        <img src="assets/photography/1.webp" alt="Progetto Fotografico - Scatto 1" loading="lazy">
                     </div>
                     <div class="project-info">
-                        <span class="project-category">Direzione Artistica</span>
-                        <h3 class="project-name">Frammenti di Tempo</h3>
-                        <p class="project-description">Installazione visiva ed esposizione concettuale sul tempo lineare.</p>
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #1</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
                     </div>
                 </article>
-
-                <!-- Project 4 -->
-                <article class="project-card">
-                    <div class="project-visual gradient-4">
-                        <span class="project-number">04</span>
+                <!-- 2 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/2.webp">
+                        <img src="assets/photography/2.webp" alt="Progetto Fotografico - Scatto 2" loading="lazy">
                     </div>
                     <div class="project-info">
-                        <span class="project-category">Videoclip Musicale</span>
-                        <h3 class="project-name">Eco della Notte</h3>
-                        <p class="project-description">Direzione della fotografia per il singolo ufficiale di un artista indie.</p>
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #2</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 3 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/3.webp">
+                        <img src="assets/photography/3.webp" alt="Progetto Fotografico - Scatto 3" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #3</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 4 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/4.webp">
+                        <img src="assets/photography/4.webp" alt="Progetto Fotografico - Scatto 4" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #4</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 5 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/5.webp">
+                        <img src="assets/photography/5.webp" alt="Progetto Fotografico - Scatto 5" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #5</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 6 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/6.webp">
+                        <img src="assets/photography/6.webp" alt="Progetto Fotografico - Scatto 6" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #6</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 7 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/7.webp">
+                        <img src="assets/photography/7.webp" alt="Progetto Fotografico - Scatto 7" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #7</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 8 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/8.webp">
+                        <img src="assets/photography/8.webp" alt="Progetto Fotografico - Scatto 8" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #8</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 9 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/9.webp">
+                        <img src="assets/photography/9.webp" alt="Progetto Fotografico - Scatto 9" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #9</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
+                    </div>
+                </article>
+                <!-- 10 -->
+                <article class="project-card filter-item" data-category="photo">
+                    <div class="project-visual photo-item" data-src="assets/photography/10.webp">
+                        <img src="assets/photography/10.webp" alt="Progetto Fotografico - Scatto 10" loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <span class="project-category">Fotografia d'Autore</span>
+                        <h3 class="project-name">Scatto #10</h3>
+                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
                     </div>
                 </article>
             </div>
@@ -105,7 +218,7 @@
         <!-- About Section -->
         <section class="about" id="about">
             <div class="section-header">
-                <span class="section-label">02 / FILOSOFIA & BIO</span>
+                <span class="section-label">03 / FILOSOFIA & BIO</span>
                 <h2 class="section-title">Chi Sono</h2>
             </div>
             <div class="about-content">
@@ -139,7 +252,7 @@
         <!-- Contact Section -->
         <section class="contact" id="contact">
             <div class="section-header">
-                <span class="section-label">03 / COLLABORAZIONI</span>
+                <span class="section-label">04 / COLLABORAZIONI</span>
                 <h2 class="section-title">Lavoriamo Insieme</h2>
             </div>
             <div class="contact-container">
@@ -181,6 +294,30 @@
             </div>
         </section>
     </main>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox-modal">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Chiudi">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Precedente">&#10094;</button>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Successiva">&#10095;</button>
+        <div class="lightbox-content">
+            <!-- Dynamic Image Content -->
+            <img src="" alt="" id="lightbox-img" class="lightbox-media active">
+            <!-- Dynamic Video/Notice Content -->
+            <div id="lightbox-video-container" class="lightbox-media">
+                <div class="lightbox-notice">
+                    <i class="fa-solid fa-clapperboard notice-icon"></i>
+                    <h3 id="lightbox-video-title">Titolo Cortometraggio</h3>
+                    <p class="notice-text">I file video originali dei cortometraggi (da 560MB e 1.1GB) sono troppo grandi per essere ospitati su GitHub Pages, che impone un limite di 100MB per file.</p>
+                    <p class="notice-sub">Per mostrare qui il corto, caricalo su **Vimeo** o **YouTube** e inserisci l'indirizzo nel codice per poterlo integrare con un player integrato.</p>
+                    <div class="notice-action">
+                        <a href="#contact" class="btn btn-primary btn-sm" id="lightbox-video-contact">Contattami per info</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="lightbox-caption" id="lightbox-caption">Dettagli Immagine</div>
+    </div>
 
     <footer class="main-footer">
         <p>&copy; 2026 Orlando Costi Visuals. Tutti i diritti riservati.</p>
