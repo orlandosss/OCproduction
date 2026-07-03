@@ -14,14 +14,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="bg-grid"></div>
+    <div class="bg-ambient" aria-hidden="true"></div>
+    <div class="bg-pattern" aria-hidden="true"></div>
+    <div class="film-grain" aria-hidden="true"></div>
 
     <header class="main-header">
-        <a href="#" class="logo">ORLANDO COSTI<span>VISUALS</span></a>
+        <a href="index.html" class="logo">ORLANDO COSTI<span>VISUALS</span></a>
         <nav class="nav-links">
-            <a href="#showreel" class="nav-link">Showreel</a>
             <a href="#cinema" class="nav-link">Cinema</a>
-            <a href="#photography" class="nav-link">Fotografia</a>
+            <a href="photography.html" class="nav-link">Fotografia</a>
             <a href="#about" class="nav-link">Chi Sono</a>
             <a href="#contact" class="nav-link">Contatti</a>
         </nav>
@@ -35,219 +36,147 @@
         <!-- Hero Section -->
         <section class="hero" id="hero">
             <div class="hero-content">
-                <p class="hero-tagline">DIRETTORE DELLA FOTOGRAFIA & FOTOGRAFO</p>
+                <p class="hero-tagline">REGIA &bull; MONTAGGIO &bull; DIREZIONE DELLA FOTOGRAFIA</p>
                 <h1 class="hero-title">Raccontare storie attraverso la luce e il movimento.</h1>
                 <p class="hero-desc">Direzione artistica, cinematografia e fotografia d'autore per brand, cinema e progetti musicali.</p>
                 <div class="hero-cta">
-                    <a href="#showreel" class="btn btn-primary">Guarda lo Showreel</a>
-                    <a href="#cinema" class="btn btn-secondary">Vedi Cortometraggi</a>
+                    <a href="#cinema" class="btn btn-primary">Entra in Sala</a>
+                    <a href="photography.html" class="btn btn-secondary">Galleria Fotografica</a>
                 </div>
             </div>
         </section>
 
-        <!-- Showreel Section -->
-        <section class="showreel-section" id="showreel">
-            <div class="section-header text-center">
-                <span class="section-label">01 / REELS</span>
-                <h2 class="section-title">Showreel Recente</h2>
+        <!-- Cinema Stage: minimal theater — silhouette seats with projected
+             light line, working curtains on each film switch -->
+        <section class="cinema-stage" id="cinema">
+            <!-- Platea minimalista: sagome sedute + linea di luce dallo schermo -->
+            <div class="stage-seats" aria-hidden="true">
+                <div class="seat-row seat-row-back"></div>
+                <div class="seat-row seat-row-front"></div>
             </div>
-            <div class="video-container">
-                <video class="portfolio-video" controls poster="assets/covers/beach_cover.png" preload="metadata">
-                    <source src="assets/reels/reel_tombola.mp4" type="video/mp4">
-                    Il tuo browser non supporta la riproduzione di questo video.
-                </video>
+
+            <div class="section-inner stage-inner">
+                <div class="section-header text-center">
+                    <span class="section-label">01 / CINEMA</span>
+                    <h2 class="section-title">Cortometraggi</h2>
+                    <p class="section-subtitle">Un palco, un film alla volta.</p>
+                </div>
+
+                <div class="stage-proscenium">
+                    <div class="stage-viewport" id="stage-viewport">
+                        <article class="stage-slide active" data-video-id="xAbP0Tb6KU0" tabindex="0" role="button" aria-label="Guarda A Chess Move">
+                            <div class="stage-visual">
+                                <img src="assets/covers/chessboard_cover.png" alt="A Chess Move Cover">
+                                <i class="fa-solid fa-play play-icon-overlay"></i>
+                                <div class="video-badge">CORTOMETRAGGIO</div>
+                            </div>
+                            <div class="stage-info">
+                                <span class="project-category">Cinematografia / Short Film</span>
+                                <h3 class="project-name">A Chess Move (Taoprod)</h3>
+                                <p class="project-description">Direzione della fotografia per corto cinematografico drammatico.</p>
+                            </div>
+                        </article>
+
+                        <article class="stage-slide" data-video-id="LDUSHwS_K_g" tabindex="0" role="button" aria-label="Guarda Terminal Dream">
+                            <div class="stage-visual">
+                                <img src="assets/covers/beach_cover.png" alt="Terminal Dream Cover">
+                                <i class="fa-solid fa-play play-icon-overlay"></i>
+                                <div class="video-badge">CORTOMETRAGGIO</div>
+                            </div>
+                            <div class="stage-info">
+                                <span class="project-category">Cinematografia / Short Film</span>
+                                <h3 class="project-name">Terminal Dream</h3>
+                                <p class="project-description">Lavoro di cinematografia personale, esperimento di composizione e colore.</p>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Sipario: si chiude e si riapre a ogni cambio di corto -->
+                    <div class="stage-curtains" id="stage-curtains" aria-hidden="true">
+                        <div class="curtain curtain-left"></div>
+                        <div class="curtain curtain-right"></div>
+                    </div>
+                </div>
+
+                <div class="stage-controls">
+                    <button class="stage-btn" id="stage-prev" aria-label="Film precedente">
+                        <i class="fa-solid fa-backward-step"></i>
+                    </button>
+                    <div class="stage-counter">
+                        <span id="stage-current">01</span>
+                        <span class="counter-sep">/</span>
+                        <span id="stage-total">02</span>
+                    </div>
+                    <button class="stage-btn" id="stage-next" aria-label="Film successivo">
+                        <i class="fa-solid fa-forward-step"></i>
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- Cinema Section -->
-        <section class="cinema-section" id="cinema">
-            <div class="section-header">
-                <span class="section-label">02 / CINEMATOGRAFIA</span>
-                <h2 class="section-title">Cortometraggi</h2>
-            </div>
-            
-            <div class="projects-grid cinema-grid">
-                <!-- Cinema Projects -->
-                <article class="project-card" data-category="cinema" data-video-id="xAbP0Tb6KU0">
-                    <div class="project-visual video-placeholder-card">
-                        <i class="fa-solid fa-play play-icon-overlay"></i>
-                        <div class="video-badge">CORTOMETRAGGIO</div>
-                        <img src="assets/covers/chessboard_cover.png" alt="A Chess Move Cover" class="project-img-bg">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Cinematografia / Short Film</span>
-                        <h3 class="project-name">A Chess Move (Taoprod)</h3>
-                        <p class="project-description">Direzione della fotografia per corto cinematografico drammatico.</p>
-                    </div>
-                </article>
-
-                <article class="project-card" data-category="cinema" data-video-id="LDUSHwS_K_g">
-                    <div class="project-visual video-placeholder-card">
-                        <i class="fa-solid fa-play play-icon-overlay"></i>
-                        <div class="video-badge">CORTOMETRAGGIO</div>
-                        <img src="assets/covers/beach_cover.png" alt="Terminal Dream Cover" class="project-img-bg">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Cinematografia / Short Film</span>
-                        <h3 class="project-name">Terminal Dream</h3>
-                        <p class="project-description">Lavoro di cinematografia personale, esperimento di composizione e colore.</p>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- Photography Section -->
-        <section class="photography-section" id="photography">
-            <div class="section-header">
-                <span class="section-label">03 / FOTOGRAFIA</span>
-                <h2 class="section-title">Progetti Fotografici</h2>
-            </div>
-            
-            <div class="projects-grid photography-grid">
-                <!-- Photography Projects (1 to 10) -->
-                <!-- 1 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/1.webp">
-                        <img src="assets/photography/1.webp" alt="Progetto Fotografico - Scatto 1" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #1</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 2 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/2.webp">
-                        <img src="assets/photography/2.webp" alt="Progetto Fotografico - Scatto 2" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #2</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 3 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/3.webp">
-                        <img src="assets/photography/3.webp" alt="Progetto Fotografico - Scatto 3" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #3</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 4 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/4.webp">
-                        <img src="assets/photography/4.webp" alt="Progetto Fotografico - Scatto 4" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #4</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 5 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/5.webp">
-                        <img src="assets/photography/5.webp" alt="Progetto Fotografico - Scatto 5" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #5</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 6 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/6.webp">
-                        <img src="assets/photography/6.webp" alt="Progetto Fotografico - Scatto 6" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #6</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 7 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/7.webp">
-                        <img src="assets/photography/7.webp" alt="Progetto Fotografico - Scatto 7" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #7</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 8 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/8.webp">
-                        <img src="assets/photography/8.webp" alt="Progetto Fotografico - Scatto 8" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #8</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 9 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/9.webp">
-                        <img src="assets/photography/9.webp" alt="Progetto Fotografico - Scatto 9" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #9</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-                <!-- 10 -->
-                <article class="project-card" data-category="photo">
-                    <div class="project-visual photo-item" data-src="assets/photography/10.webp">
-                        <img src="assets/photography/10.webp" alt="Progetto Fotografico - Scatto 10" loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <span class="project-category">Fotografia d'Autore</span>
-                        <h3 class="project-name">Scatto #10</h3>
-                        <p class="project-description">Dall'esclusivo progetto fotografico personale.</p>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- About Section -->
+        <!-- About & Skills Section -->
         <section class="about" id="about">
-            <div class="section-header">
-                <span class="section-label">04 / FILOSOFIA & BIO</span>
-                <h2 class="section-title">Chi Sono</h2>
-            </div>
-            <div class="about-content">
-                <div class="about-text">
-                    <p class="about-lead">Mi chiamo Orlando Costi, sono un artista visivo e studente dell'Accademia di Belle Arti di Venezia all'indirizzo Nuove Tecnologie per l'Arte / Multimediale.</p>
-                    <p>La mia passione risiede nella narrazione visiva: mi occupo principalmente di <strong>regia</strong>, <strong>montaggio video</strong> e <strong>direzione della fotografia</strong> (DoP). Cerco di unire l'estetica cinematografica classica con le tecniche e i media digitali più moderni.</p>
-                    <p>Per esprimere la mia visione creativa, sperimento costantemente con la computer grafica 3D e mi tengo aggiornato con le ultime tecnologie di intelligenza artificiale applicate alla produzione visiva.</p>
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-label">02 / BIO &amp; SKILLS</span>
+                    <h2 class="section-title">Chi Sono</h2>
                 </div>
-                <div class="about-details">
-                    <div class="detail-group">
-                        <h4>Software 3D & Engine</h4>
-                        <ul>
-                            <li>Autodesk Maya & 3ds Max</li>
-                            <li>Unreal Engine</li>
-                            <li>Gaea (Generazione Terreni)</li>
-                            <li>Substance Painter (Texturing)</li>
-                        </ul>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p class="about-lead">Mi chiamo Orlando Costi, sono un visual artist e studente dell'Accademia di Belle Arti di Venezia — Nuove Tecnologie dell'Arte, indirizzo Multimediale.</p>
+                        <p>Il mio percorso si concentra su regia, montaggio e direzione della fotografia: dal concept alla color grading finale, curo ogni fase dell'immagine per costruire linguaggi visivi capaci di comunicare senza bisogno di parole.</p>
+                        <p>Affianco alla produzione cinematografica una ricerca costante sulle nuove tecnologie — ambienti 3D, real-time e workflow generativi — per espandere i confini del racconto visivo.</p>
                     </div>
-                    <div class="detail-group">
-                        <h4>Editing & Post-Produzione</h4>
-                        <ul>
-                            <li>DaVinci Resolve (Editing & Color)</li>
-                            <li>Adobe Premiere & After Effects</li>
-                            <li>Adobe Photoshop & Illustrator</li>
-                            <li>Adobe InDesign</li>
-                        </ul>
+                    <div class="about-details">
+                        <div class="detail-group">
+                            <h4>Specializzazioni</h4>
+                            <ul>
+                                <li>Regia</li>
+                                <li>Montaggio</li>
+                                <li>Direzione della Fotografia (DoP)</li>
+                                <li>Color Grading</li>
+                            </ul>
+                        </div>
+                        <div class="detail-group">
+                            <h4>Formazione</h4>
+                            <ul>
+                                <li>Accademia di Belle Arti di Venezia</li>
+                                <li>Nuove Tecnologie dell'Arte / Multimediale</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skills-grid">
+                    <div class="skill-card" data-tilt="10">
+                        <i class="fa-solid fa-cube"></i>
+                        <h5>Autodesk Maya</h5>
+                        <p>Modellazione e animazione 3D</p>
+                    </div>
+                    <div class="skill-card" data-tilt="10">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <h5>Unreal Engine</h5>
+                        <p>Ambienti real-time e virtual production</p>
+                    </div>
+                    <div class="skill-card" data-tilt="10">
+                        <i class="fa-solid fa-mountain-sun"></i>
+                        <h5>Gaea</h5>
+                        <p>Terrain design e ambienti naturali</p>
+                    </div>
+                    <div class="skill-card" data-tilt="10">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        <h5>Adobe Suite</h5>
+                        <p>Premiere, After Effects, Photoshop</p>
+                    </div>
+                    <div class="skill-card" data-tilt="10">
+                        <i class="fa-solid fa-clapperboard"></i>
+                        <h5>DaVinci Resolve</h5>
+                        <p>Montaggio e color grading</p>
+                    </div>
+                    <div class="skill-card" data-tilt="10">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <h5>AI Tools</h5>
+                        <p>Workflow generativi per l'immagine</p>
                     </div>
                 </div>
             </div>
@@ -255,46 +184,49 @@
 
         <!-- Contact Section -->
         <section class="contact" id="contact">
-            <div class="section-header">
-                <span class="section-label">05 / COLLABORAZIONI</span>
-                <h2 class="section-title">Lavoriamo Insieme</h2>
-            </div>
-            <div class="contact-container">
-                <div class="contact-info">
-                    <p class="contact-lead">Hai un'idea per un progetto visivo, un film o uno shooting?</p>
-                    <p>Sono sempre alla ricerca di nuove collaborazioni stimolanti in tutta Italia e all'estero.</p>
-                    <div class="contact-methods">
-                        <a href="mailto:info@orlandocostivisuals.com" class="contact-method-item">
-                            <i class="fa-regular fa-envelope"></i>
-                            <span>info@orlandocostivisuals.com</span>
-                        </a>
-                        <div class="contact-method-item">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>Italia / Disponibile a trasferte</span>
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-label">03 / COLLABORAZIONI</span>
+                    <h2 class="section-title">Lavoriamo Insieme</h2>
+                </div>
+                <div class="contact-container">
+                    <div class="contact-info">
+                        <p class="contact-lead">Hai un'idea per un progetto visivo, un film o uno shooting?</p>
+                        <p>Sono sempre alla ricerca di nuove collaborazioni stimolanti in tutta Italia e all'estero.</p>
+                        <div class="contact-methods">
+                            <a href="mailto:info@orlandocostivisuals.com" class="contact-method-item">
+                                <i class="fa-regular fa-envelope"></i>
+                                <span>info@orlandocostivisuals.com</span>
+                            </a>
+                            <div class="contact-method-item">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Venezia / Disponibile a trasferte</span>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Vimeo"><i class="fa-brands fa-vimeo-v"></i></a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                         </div>
                     </div>
-                    <div class="social-links">
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Vimeo"><i class="fa-brands fa-vimeo-v"></i></a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-                    </div>
+
+                    <form class="contact-form" action="#" method="POST" id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Nome / Azienda</label>
+                            <input type="text" id="name" name="name" required placeholder="Inserisci il tuo nome">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="la-tua-email@esempio.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Messaggio</label>
+                            <textarea id="message" name="message" rows="5" required placeholder="Raccontami il tuo progetto..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Invia Messaggio</button>
+                        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+                    </form>
                 </div>
-                
-                <form class="contact-form" action="#" method="POST" id="contact-form">
-                    <div class="form-group">
-                        <label for="name">Nome / Azienda</label>
-                        <input type="text" id="name" name="name" required placeholder="Inserisci il tuo nome">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required placeholder="la-tua-email@esempio.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Messaggio</label>
-                        <textarea id="message" name="message" rows="5" required placeholder="Raccontami il tuo progetto..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Invia Messaggio</button>
-                </form>
             </div>
         </section>
     </main>
@@ -305,11 +237,9 @@
         <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Precedente">&#10094;</button>
         <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Successiva">&#10095;</button>
         <div class="lightbox-content">
-            <!-- Dynamic Image Content -->
             <img src="" alt="" id="lightbox-img" class="lightbox-media active">
-            <!-- Dynamic Video/Iframe Content -->
             <div id="lightbox-video-container" class="lightbox-media">
-                <iframe id="lightbox-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <iframe id="lightbox-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="Riproduzione video"></iframe>
             </div>
         </div>
         <div class="lightbox-caption" id="lightbox-caption">Dettagli Immagine</div>

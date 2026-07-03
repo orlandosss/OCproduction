@@ -1,25 +1,29 @@
 /* ==========================================================================
-   Orlando Costi Visuals - Premium Minimalist Portfolio CSS
+   Orlando Costi Visuals - Portfolio CSS (grigio & argento)
+   Pages: index.html (Hero, Cinema Stage, About, Contact)
+          photography.html (Selezione progetti + Galleria spaziale)
    ========================================================================== */
 
+/* 1. Design System Tokens */
 :root {
-    --bg-color: #0c0d0f; /* Grigio carbone scuro */
-    --bg-card: #16171b; /* Grigio scuro per le card */
-    --text-primary: #f3f4f6; /* Grigio chiarissimo / argento chiaro */
-    --text-secondary: #9ca3af; /* Grigio medio */
-    --text-muted: #6b7280; /* Grigio spento */
-    --accent: #e5e7eb; /* Elegante argento metallico */
-    --accent-hover: #ffffff; /* Bianco puro al passaggio */
-    --border-color: rgba(255, 255, 255, 0.08);
-    --grid-color: rgba(255, 255, 255, 0.02);
-    
+    --bg-color: #0c0d0f;        /* grigio carbone scuro */
+    --bg-slate: #101114;        /* grigio ardesia */
+    --bg-card: #16171b;         /* grigio scuro per card e form */
+    --text-primary: #f3f4f6;    /* argento chiarissimo */
+    --text-secondary: #9ca3af;  /* grigio medio */
+    --text-muted: #6b7280;      /* grigio spento */
+    --accent: #e5e7eb;          /* argento metallico */
+    --accent-hover: #ffffff;    /* bianco puro */
+    --accent-rgb: 229, 231, 235;
+    --border-color: rgba(255, 255, 255, 0.1);
+
     /* Font Families */
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    
+
     /* Spacings */
     --container-max-width: 1200px;
-    --section-padding: 100px 20px;
+    --section-padding-y: 110px;
     --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -43,19 +47,73 @@ body {
     position: relative;
 }
 
-/* Background grid overlay */
-.bg-grid {
+/* Ambient background: chiaroscuro neutro che respira lentamente */
+.bg-ambient {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-size: 40px 40px;
-    background-image: 
-        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+    inset: -12%;
+    z-index: -2;
+    pointer-events: none;
+    background:
+        radial-gradient(50% 60% at 20% 18%, rgba(255, 255, 255, 0.035), transparent 70%),
+        radial-gradient(60% 70% at 80% 72%, rgba(255, 255, 255, 0.02), transparent 72%),
+        linear-gradient(180deg, #0c0d0f 0%, #08090b 100%);
+    animation: ambient-drift 32s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes ambient-drift {
+    0%   { transform: translate3d(-2%, -1.5%, 0) scale(1); }
+    50%  { transform: translate3d(1.5%, 1%, 0) scale(1.04); }
+    100% { transform: translate3d(3%, 2%, 0) scale(1.08); }
+}
+
+/* Pattern continuo: micro-punti argento in deriva lentissima.
+   Traslazione = multipli esatti della tile (28px) → loop invisibile */
+.bg-pattern {
+    position: fixed;
+    top: -320px;
+    left: -320px;
+    width: calc(100vw + 640px);
+    height: calc(100vh + 640px);
     z-index: -1;
     pointer-events: none;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1.3px);
+    background-size: 28px 28px;
+    animation: pattern-drift 150s linear infinite;
+    will-change: transform;
+}
+
+@keyframes pattern-drift {
+    to { transform: translate3d(280px, 168px, 0); }
+}
+
+/* Animated film-grain overlay (SVG turbulence noise, GPU-jittered) */
+.film-grain {
+    position: fixed;
+    top: -50vh;
+    left: -50vw;
+    width: 200vw;
+    height: 200vh;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 1500;
+    animation: grain-shift 0.9s steps(10) infinite;
+    will-change: transform;
+}
+
+@keyframes grain-shift {
+    0%   { transform: translate3d(0, 0, 0); }
+    10%  { transform: translate3d(-2%, -3%, 0); }
+    20%  { transform: translate3d(3%, 1%, 0); }
+    30%  { transform: translate3d(-1%, 3%, 0); }
+    40%  { transform: translate3d(2%, -2%, 0); }
+    50%  { transform: translate3d(-3%, 2%, 0); }
+    60%  { transform: translate3d(1%, -1%, 0); }
+    70%  { transform: translate3d(-2%, 2%, 0); }
+    80%  { transform: translate3d(3%, -3%, 0); }
+    90%  { transform: translate3d(-1%, 1%, 0); }
+    100% { transform: translate3d(0, 0, 0); }
 }
 
 /* Typography elements */
@@ -79,7 +137,7 @@ ul {
     list-style: none;
 }
 
-/* 3. Header & Navigation */
+/* 3. Header & Navigation (shared across pages) */
 .main-header {
     position: fixed;
     top: 0;
@@ -90,10 +148,15 @@ ul {
     align-items: center;
     padding: 30px 40px;
     z-index: 100;
-    background: rgba(8, 8, 10, 0.7);
+    background: rgba(12, 13, 15, 0.72);
     backdrop-filter: blur(15px);
     border-bottom: 1px solid var(--border-color);
     transition: var(--transition-smooth);
+}
+
+.main-header.scrolled {
+    padding: 15px 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
@@ -136,11 +199,13 @@ ul {
     transition: var(--transition-smooth);
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
     color: var(--text-primary);
 }
 
-.nav-link:hover::after {
+.nav-link:hover::after,
+.nav-link.active::after {
     width: 100%;
 }
 
@@ -162,16 +227,121 @@ ul {
     transition: var(--transition-smooth);
 }
 
-/* 4. Hero Section */
+/* 4. Sections Base Layout (full-bleed sections, constrained inner) */
+section {
+    padding: var(--section-padding-y) 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.section-inner {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-header {
+    margin-bottom: 60px;
+}
+
+.section-header.text-center {
+    text-align: center;
+}
+
+.section-label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+}
+
+.section-subtitle {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+    font-family: var(--font-serif);
+}
+
+/* Scroll reveal: sections fade up, inner blocks follow with a stagger */
+.reveal {
+    opacity: 0;
+    transform: translateY(34px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+}
+
+.reveal .section-header,
+.reveal .stage-proscenium,
+.reveal .about-content,
+.reveal .contact-container,
+.reveal .folder-grid,
+.reveal .stage-controls {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible .section-header {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.08s;
+}
+
+.reveal.visible .stage-proscenium,
+.reveal.visible .about-content,
+.reveal.visible .contact-container,
+.reveal.visible .folder-grid {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.22s;
+}
+
+.reveal.visible .stage-controls {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.38s;
+}
+
+/* Skill cards fade in one after another (opacity only: the 3D tilt owns
+   their transform, so its 0.18s transform transition stays untouched) */
+.reveal .skill-card {
+    opacity: 0;
+    transition: opacity 0.7s ease, transform 0.18s ease-out;
+}
+
+.reveal.visible .skill-card {
+    opacity: 1;
+}
+
+.reveal.visible .skill-card:nth-child(1) { transition-delay: 0.12s, 0s; }
+.reveal.visible .skill-card:nth-child(2) { transition-delay: 0.19s, 0s; }
+.reveal.visible .skill-card:nth-child(3) { transition-delay: 0.26s, 0s; }
+.reveal.visible .skill-card:nth-child(4) { transition-delay: 0.33s, 0s; }
+.reveal.visible .skill-card:nth-child(5) { transition-delay: 0.40s, 0s; }
+.reveal.visible .skill-card:nth-child(6) { transition-delay: 0.47s, 0s; }
+
+/* 5. Hero Section */
 .hero {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 140px 20px 80px 20px;
-    max-width: var(--container-max-width);
-    margin: 0 auto;
     text-align: center;
+    border-top: none;
 }
 
 .hero-content {
@@ -182,7 +352,7 @@ ul {
 .hero-tagline {
     font-size: 0.85rem;
     letter-spacing: 0.3em;
-    color: var(--accent);
+    color: var(--text-secondary);
     margin-bottom: 24px;
     font-weight: 500;
 }
@@ -218,11 +388,13 @@ ul {
     border-radius: 4px;
     transition: var(--transition-smooth);
     cursor: pointer;
+    border: none;
+    font-family: var(--font-sans);
 }
 
 .btn-primary {
     background-color: var(--accent);
-    color: #000;
+    color: #0c0d0f;
     border: 1px solid var(--accent);
 }
 
@@ -230,7 +402,7 @@ ul {
     background-color: var(--accent-hover);
     border-color: var(--accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.12);
 }
 
 .btn-secondary {
@@ -245,183 +417,11 @@ ul {
     transform: translateY(-2px);
 }
 
-/* 5. Sections Base Styles */
-section {
-    padding: var(--section-padding);
-    max-width: var(--container-max-width);
-    margin: 0 auto;
-    border-top: 1px solid var(--border-color);
-}
-
-.section-header {
-    margin-bottom: 60px;
-}
-
-.section-header.text-center {
-    text-align: center;
-}
-
-.section-label {
-    display: block;
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
-    color: var(--accent);
-    margin-bottom: 12px;
-    font-weight: 500;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    color: var(--text-primary);
-}
-
-/* 6. Showreel Section */
-.showreel-section {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.video-container {
-    width: 100%;
-    aspect-ratio: 16/9;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    background-color: #000;
-}
-
-.portfolio-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* 7. Projects Section (Gallery Filters) */
-.gallery-filters {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 50px;
-}
-
-.filter-btn {
-    background: none;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-    letter-spacing: 0.05em;
-}
-
-.filter-btn.active, .filter-btn:hover {
-    background-color: var(--accent);
-    color: #000;
-    border-color: var(--accent);
-}
-
-/* Gallery Grid */
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px;
-    transition: opacity 0.3s ease;
-}
-
-.photography-grid {
-    grid-template-columns: repeat(3, 1fr);
-}
-
-.project-card {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-}
-
-/* Project Cards */
-.project-visual {
-    width: 100%;
-    aspect-ratio: 16/10;
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition-smooth);
-    border: 1px solid var(--border-color);
-    background-color: #0f0f13;
-}
-
-.project-visual img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: var(--transition-smooth);
-}
-
-/* Custom cards for Video/Cinema */
-.video-placeholder-card {
-    background: linear-gradient(135deg, #18181c 0%, #08080a 100%);
-    position: relative;
-}
-
-.project-img-bg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.4;
-    z-index: 1;
-    transition: var(--transition-smooth);
-}
-
-.play-icon-overlay {
-    font-size: 2.5rem;
-    color: var(--accent);
-    opacity: 0.8;
-    z-index: 2;
-    transition: var(--transition-smooth);
-    background: rgba(0, 0, 0, 0.6);
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-left: 5px; /* Alignment visual correction for play icon */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.video-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    z-index: 2;
-}
-
-.project-info {
-    transition: var(--transition-smooth);
-}
-
+/* Shared project text styles */
 .project-category {
     font-size: 0.75rem;
     letter-spacing: 0.1em;
-    color: var(--accent);
+    color: var(--text-secondary);
     text-transform: uppercase;
     font-weight: 500;
     margin-bottom: 6px;
@@ -432,6 +432,7 @@ section {
     font-size: 1.5rem;
     color: var(--text-primary);
     margin-bottom: 8px;
+    transition: var(--transition-smooth);
 }
 
 .project-description {
@@ -440,44 +441,639 @@ section {
     font-weight: 300;
 }
 
-/* Hover Effects */
-.project-card:hover .project-visual {
-    transform: scale(0.98);
-    border-color: rgba(212, 175, 55, 0.3);
+/* Generic 3D tilt targets (transform driven by JS) */
+[data-tilt] {
+    transition: transform 0.18s ease-out;
+    transform-style: preserve-3d;
+    will-change: transform;
 }
 
-.project-card:hover .project-visual img {
-    transform: scale(1.03);
+/* ==========================================================================
+   7. CINEMA STAGE — sala minimale: platea in silhouette, sipario funzionale
+   ========================================================================== */
+.cinema-stage {
+    position: relative;
+    background-color: #070708;
+    overflow: hidden;
+    padding-bottom: 280px; /* respiro per la platea in primo piano */
 }
 
-.project-card:hover .project-img-bg {
-    opacity: 0.6;
+/* Vignetta neutra: chiude la sala senza distrarre */
+.cinema-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse 120% 90% at 50% 30%,
+        transparent 55%, rgba(0, 0, 0, 0.55) 100%);
 }
 
-.project-card:hover .play-icon-overlay {
+.stage-inner {
+    position: relative;
+}
+
+.stage-inner .section-header {
+    position: relative;
+    z-index: 2;
+}
+
+/* --- Platea minimalista ---------------------------------------------------
+   Sagome di poltrone quasi nere; una sottile linea bianca corre lungo il
+   bordo superiore di ogni schienale: è la luce proiettata dallo schermo.
+   Ogni fila: 3 layer ripetuti — (1) sagoma, (2) stessa sagoma spostata
+   in alto di --lift in colore luce (spunta solo il filo superiore),
+   (3) corpo pieno sotto. --------------------------------------------------- */
+.stage-seats {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 240px;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.seat-row {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-repeat: repeat-x;
+    background-size: var(--w) 100%;
+    background-image:
+        radial-gradient(ellipse 42% 36% at 50% 30%, var(--fill) 99%, transparent 100%),
+        radial-gradient(ellipse 42% 36% at 50% calc(30% - var(--lift)), var(--line) 98%, transparent 100%),
+        linear-gradient(to bottom, transparent 0 40%, var(--fill) 40.5% 100%);
+}
+
+.seat-row-back {
+    --w: 118px;
+    --lift: 2.5px;
+    --fill: #050506;
+    --line: rgba(243, 244, 246, 0.22);
+    width: 106%;
+    height: 96px;
+    bottom: 96px;
+}
+
+.seat-row-front {
+    --w: 170px;
+    --lift: 3.5px;
+    --fill: #030304;
+    --line: rgba(243, 244, 246, 0.5);
+    width: 112%;
+    height: 138px;
+    bottom: -26px;
+}
+
+/* --- Proscenio: schermo + sipario ----------------------------------------- */
+.stage-proscenium {
+    position: relative;
+    z-index: 3;
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.stage-viewport {
+    position: relative;
+    min-height: 480px;
+}
+
+.stage-slide {
+    display: none;
+    cursor: pointer;
+    outline-color: var(--accent);
+}
+
+.stage-slide.active {
+    display: block;
+}
+
+.stage-visual {
+    position: relative;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0b0c0e;
+    box-shadow: 0 40px 90px -20px rgba(0, 0, 0, 0.9);
+}
+
+.stage-visual img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+    filter: saturate(0.25); /* fotogrammi quasi monocromi, coerenti con la palette */
+    transition: var(--transition-smooth);
+}
+
+.stage-slide:hover .stage-visual img {
+    opacity: 0.95;
+    transform: scale(1.02);
+}
+
+.play-icon-overlay {
+    font-size: 2.5rem;
+    color: var(--accent);
+    opacity: 0.85;
+    z-index: 2;
+    transition: var(--transition-smooth);
+    background: rgba(7, 7, 8, 0.6);
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 6px; /* Alignment visual correction for play icon */
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.stage-slide:hover .play-icon-overlay {
     opacity: 1;
-    transform: scale(1.1);
-    color: #fff;
+    color: #0c0d0f;
     background-color: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.08);
+}
+
+.video-badge {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    background-color: rgba(7, 7, 8, 0.7);
+    color: var(--accent);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    z-index: 2;
+}
+
+.stage-info {
+    text-align: center;
+    margin-top: 28px;
+}
+
+/* --- Sipario --------------------------------------------------------------
+   Due pannelli plissettati in grigio. A riposo incorniciano appena lo
+   schermo; al cambio corto si chiudono, la pellicola cambia, si riaprono. */
+.stage-curtains {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    aspect-ratio: 16/9; /* copre lo schermo, non la didascalia sotto */
+    overflow: hidden;
+    pointer-events: none;
+    border-radius: 10px;
+}
+
+.curtain {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 52%;
+    background:
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 14%),
+        repeating-linear-gradient(90deg,
+            #1a1b1e 0px, #232429 11px, #121316 24px, #1d1e22 36px, #161719 46px);
+    box-shadow: 0 0 46px rgba(0, 0, 0, 0.7);
+    transition: transform 0.75s cubic-bezier(0.77, 0, 0.18, 1);
+    will-change: transform;
+}
+
+/* Bordo interno: filo argento che prende la luce dello schermo */
+.curtain::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom,
+        rgba(243, 244, 246, 0.35), rgba(243, 244, 246, 0.08) 70%, transparent);
+}
+
+.curtain-left {
+    left: 0;
+    transform: translateX(-92%); /* a riposo un lembo resta a incorniciare */
+}
+.curtain-left::after { right: 0; }
+
+.curtain-right {
+    right: 0;
+    transform: translateX(92%);
+    transition-delay: 0.04s;
+}
+.curtain-right::after { left: 0; }
+
+.stage-curtains.closed .curtain-left,
+.stage-curtains.closed .curtain-right {
+    transform: translateX(0);
+}
+
+/* --- Controlli ------------------------------------------------------------ */
+.stage-controls {
+    position: relative;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 46px;
+}
+
+.stage-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #131417;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.04), 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+
+.stage-btn:hover {
+    color: #0c0d0f;
+    background: var(--accent);
     border-color: var(--accent);
 }
 
-.project-card:hover .project-name {
-    color: var(--accent-hover);
+.stage-btn:active {
+    transform: scale(0.9);
 }
 
-/* Filter Hide State */
-.filter-item {
-    transition: opacity 0.4s ease, transform 0.4s ease;
+.stage-counter {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    letter-spacing: 0.25em;
+    color: var(--text-secondary);
 }
 
-.filter-item.hide {
+.stage-counter .counter-sep {
+    margin: 0 8px;
+    color: var(--text-muted);
+}
+
+#stage-current {
+    color: var(--accent);
+}
+
+/* ==========================================================================
+   8a. PROJECT FOLDER SELECTION (photography.html, view 1)
+   ========================================================================== */
+.project-select {
+    border-top: none;
+    min-height: 100vh;
+    padding-top: 160px;
+}
+
+.folder-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    max-width: 940px;
+    margin: 0 auto;
+}
+
+.folder-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    outline-color: var(--accent);
+    transition: var(--transition-smooth);
+}
+
+.folder-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(var(--accent-rgb), 0.4);
+    box-shadow: 0 26px 50px rgba(0, 0, 0, 0.55);
+}
+
+.folder-cover {
+    aspect-ratio: 16/10;
+    overflow: hidden;
+}
+
+.folder-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    transition: var(--transition-smooth);
+}
+
+.folder-card:hover .folder-cover img {
+    transform: scale(1.05);
+    opacity: 1;
+}
+
+.folder-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+}
+
+.folder-info i {
+    font-size: 1.3rem;
+    color: var(--accent);
+}
+
+.folder-info h3 {
+    font-size: 1.15rem;
+    color: var(--text-primary);
+}
+
+.folder-info p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* --- View switching: zoom/fade between folders and gallery --- */
+.view-hidden {
+    display: none !important;
+}
+
+.view-enter {
+    animation: view-in 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-select.zoom-out {
+    animation: view-out 0.45s cubic-bezier(0.55, 0, 0.8, 0.4) forwards;
+}
+
+@keyframes view-in {
+    from {
+        opacity: 0;
+        transform: scale(1.06);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes view-out {
+    to {
+        opacity: 0;
+        transform: scale(1.12);
+    }
+}
+
+/* "Back to projects" button */
+.tunnel-back {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 44px;
+    background: rgba(22, 23, 27, 0.85);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    pointer-events: auto;
+}
+
+.tunnel-back:hover {
+    color: #0c0d0f;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ==========================================================================
+   8b. SPATIAL PHOTOGRAPHY TUNNEL (photography.html, view 2)
+   Default: readable grid (mobile/touch/reduced-motion fallback).
+   body.tunnel-3d: fixed full-screen 3D flight scene.
+   ========================================================================== */
+
+/* --- Grid fallback (default) --- */
+.tunnel-scene {
+    border-top: none;
+    padding: 140px 0 80px;
+}
+
+.tunnel-world {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.tunnel-card {
+    cursor: pointer;
+    outline-color: var(--accent);
+}
+
+.tunnel-card img {
+    width: 100%;
+    aspect-ratio: 16/11;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: block;
+    box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.6);
+}
+
+.tunnel-card figcaption {
+    margin-top: 12px;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--text-primary);
+}
+
+.dust-plane,
+.tunnel-track,
+.tunnel-hint,
+.tunnel-counter,
+.tunnel-progress {
+    display: none; /* only exist in 3D mode */
+}
+
+.tunnel-hud .tunnel-heading {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 20px 50px;
+}
+
+/* HUD heading is placed after the world in the DOM but must read first */
+.tunnel-scene {
+    display: flex;
+    flex-direction: column;
+}
+
+.tunnel-hud   { order: 0; }
+.tunnel-world { order: 1; }
+
+/* --- 3D flight mode --- */
+.tunnel-3d .tunnel-scene {
+    position: fixed;
+    inset: 0;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 50% 42%, rgba(255, 255, 255, 0.035), transparent 60%),
+        linear-gradient(180deg, var(--bg-color) 0%, var(--bg-slate) 55%, var(--bg-color) 100%);
+    z-index: 1;
+}
+
+.tunnel-3d .tunnel-track {
+    display: block; /* scroll length = flight length (set by JS) */
+}
+
+.tunnel-3d .main-footer {
     display: none;
-    opacity: 0;
-    transform: scale(0.8);
 }
 
-/* 8. About Section */
+.tunnel-3d .dust-plane {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#dust-bg  { z-index: 1; }
+#dust-mid { z-index: 2; }
+
+.tunnel-3d .tunnel-world {
+    position: absolute;
+    inset: 0;
+    max-width: none;
+    padding: 0;
+    display: block;
+    z-index: 3;
+    perspective: 1000px;
+    perspective-origin: 50% 46%;
+    transform-style: preserve-3d;
+}
+
+/* Zig-zag corridor: cards stay near the center, so the focused one is
+   large and fully visible while neighbours recede to the sides */
+.tunnel-3d .tunnel-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(46vw, 640px);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+.tunnel-3d .tunnel-card img {
+    aspect-ratio: 16/11;
+    box-shadow: 0 40px 90px -18px rgba(0, 0, 0, 0.85);
+}
+
+.tunnel-3d .tunnel-card figcaption {
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+
+.tunnel-3d .dust-fg { z-index: 4; }
+
+/* --- HUD --- */
+.tunnel-3d .tunnel-hud {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.tunnel-3d .tunnel-heading {
+    position: absolute;
+    top: 110px;
+    left: 40px;
+    padding: 0;
+}
+
+.tunnel-3d .tunnel-heading .section-title {
+    font-size: 2rem;
+}
+
+.tunnel-3d .tunnel-back {
+    position: absolute;
+    top: 112px;
+    right: 40px;
+    margin: 0;
+}
+
+.tunnel-3d .tunnel-hint {
+    display: block;
+    position: absolute;
+    bottom: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+    animation: hint-pulse 2.4s ease-in-out infinite;
+    transition: opacity 0.6s ease;
+}
+
+.tunnel-3d .tunnel-hint.hidden {
+    opacity: 0;
+}
+
+@keyframes hint-pulse {
+    0%, 100% { opacity: 0.45; }
+    50%      { opacity: 1; }
+}
+
+.tunnel-3d .tunnel-counter {
+    display: block;
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: var(--text-secondary);
+}
+
+.tunnel-3d .tunnel-progress {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.tunnel-3d .tunnel-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+}
+
+/* ==========================================================================
+   9. About & Skills Section
+   ========================================================================== */
 .about-content {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
@@ -539,7 +1135,55 @@ section {
     color: var(--accent);
 }
 
-/* 9. Contact Section */
+/* Skills grid: 3D parallax tilt cards */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 70px;
+}
+
+.skill-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transform-style: preserve-3d;
+}
+
+/* Children float at different Z depths → internal parallax on tilt */
+.skill-card i {
+    font-size: 1.5rem;
+    color: var(--accent);
+    transform: translateZ(36px);
+}
+
+.skill-card h5 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+    color: var(--text-primary);
+    transform: translateZ(24px);
+}
+
+.skill-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    transform: translateZ(12px);
+}
+
+.skill-card:hover {
+    border-color: rgba(var(--accent-rgb), 0.35);
+}
+
+/* ==========================================================================
+   10. Contact Section
+   ========================================================================== */
 .contact-container {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
@@ -603,7 +1247,7 @@ a.contact-method-item:hover {
 }
 
 .social-links a:hover {
-    color: #000;
+    color: #0c0d0f;
     background-color: var(--accent);
     border-color: var(--accent);
     transform: translateY(-3px);
@@ -653,14 +1297,22 @@ a.contact-method-item:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* 10. Lightbox Modal */
+.form-status {
+    min-height: 1.4em;
+    font-size: 0.9rem;
+    color: var(--accent);
+}
+
+/* ==========================================================================
+   11. Lightbox Modal
+   ========================================================================== */
 .lightbox {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(4, 4, 6, 0.98);
+    background-color: rgba(5, 5, 7, 0.98);
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -724,8 +1376,8 @@ a.contact-method-item:hover {
 }
 
 .lightbox-content {
-    max-width: 80%;
-    max-height: 80%;
+    max-width: 88%;
+    max-height: 82%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -763,17 +1415,17 @@ a.contact-method-item:hover {
     width: 100%;
     height: 100%;
     border-radius: 4px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     background-color: #000;
 }
 
-/* 11. Footer */
+/* ==========================================================================
+   12. Footer
+   ========================================================================== */
 .main-footer {
     padding: 60px 20px;
     text-align: center;
     border-top: 1px solid var(--border-color);
-    max-width: var(--container-max-width);
-    margin: 0 auto;
 }
 
 .main-footer p {
@@ -787,7 +1439,7 @@ a.contact-method-item:hover {
     margin-top: 10px;
 }
 
-/* 12. Keyframes & Animations */
+/* 13. Keyframes & Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -799,23 +1451,57 @@ a.contact-method-item:hover {
     }
 }
 
-/* 13. Media Queries (Responsive) */
+/* 14. Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .film-grain,
+    .bg-ambient,
+    .bg-pattern,
+    .tunnel-hint,
+    .hero-content,
+    .view-enter,
+    .project-select.zoom-out {
+        animation: none;
+    }
+
+    .curtain {
+        transition: none;
+    }
+
+    .reveal,
+    .reveal .section-header,
+    .reveal .stage-proscenium,
+    .reveal .about-content,
+    .reveal .contact-container,
+    .reveal .folder-grid,
+    .reveal .stage-controls,
+    .reveal .skill-card {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* 15. Media Queries (Responsive) */
 @media (max-width: 992px) {
     :root {
-        --section-padding: 80px 20px;
+        --section-padding-y: 80px;
     }
-    
+
     .about-content {
         grid-template-columns: 1fr;
         gap: 60px;
     }
-    
+
     .contact-container {
         grid-template-columns: 1fr;
         gap: 50px;
     }
 
-    .photography-grid {
+    .skills-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
@@ -824,24 +1510,23 @@ a.contact-method-item:hover {
     .main-header {
         padding: 20px;
     }
-    
+
+    .main-header.scrolled {
+        padding: 12px 20px;
+    }
+
     .nav-links {
         display: none;
     }
-    
+
     .mobile-menu-btn {
         display: flex;
     }
-    
-    .projects-grid, .photography-grid {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-    
+
     .hero {
         padding-top: 120px;
     }
-    
+
     .nav-links.active {
         display: flex;
         flex-direction: column;
@@ -856,22 +1541,61 @@ a.contact-method-item:hover {
         z-index: 99;
         animation: fadeIn 0.4s ease-out forwards;
     }
-    
+
     .nav-links.active .nav-link {
         font-size: 1.5rem;
         font-family: var(--font-serif);
     }
-    
+
     .mobile-menu-btn.active .bar:nth-child(1) {
         transform: translateY(7px) rotate(45deg);
     }
-    
+
     .mobile-menu-btn.active .bar:nth-child(2) {
         transform: translateY(-1px) rotate(-45deg);
     }
-    
+
     .lightbox-nav {
         font-size: 2rem;
         padding: 10px;
+    }
+
+    /* Platea compatta su schermi piccoli */
+    .cinema-stage {
+        padding-bottom: 180px;
+    }
+
+    .stage-seats {
+        height: 150px;
+    }
+
+    .seat-row-back  { --w: 78px;  height: 60px; bottom: 62px; }
+    .seat-row-front { --w: 112px; height: 88px; bottom: -18px; }
+
+    .stage-viewport {
+        min-height: 0;
+    }
+
+    .stage-controls {
+        gap: 20px;
+        margin-top: 32px;
+    }
+
+    .folder-grid {
+        grid-template-columns: 1fr;
+        gap: 26px;
+    }
+
+    .tunnel-world {
+        grid-template-columns: 1fr;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .skill-card {
+        padding: 20px 16px;
     }
 }

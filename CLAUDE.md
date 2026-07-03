@@ -4,27 +4,33 @@ Sito portfolio statico per il Visual Artist Orlando Costi (Direttore della Fotog
 Dominio personalizzato: `orlandocostivisuals.com` (ospitato su GitHub Pages).
 
 ## Struttura del Progetto
-* `index.html` - Struttura HTML5 semantica del sito (monopagina).
-* `style.css` - Foglio di stile CSS personalizzato con griglie responsive.
-* `script.js` - Logica per menu mobile e Lightbox dinamico (immagini + video iframe).
-* `CNAME` - Configurazione dominio personalizzato.
-* `.nojekyll` - Disattiva Jekyll su GitHub Pages (velocizza la pubblicazione a <20s).
-* `.claudeignore` - Esclude le cartelle multimediali pesanti dalla scansione di Claude per risparmiare token.
+* `index.html` - Home: Hero, Cinema Stage, Chi Sono & Skills, Contatti.
+* `photography.html` - Pagina fotografia: selezione progetti a cartelle + galleria spaziale 3D.
+* `alt.html` - Esperimento "organico" standalone (CSS/JS inline), non linkato dal sito.
+* `style.css` - Foglio di stile unico per index+photography. Palette grigio/argento: bg `#0c0d0f`, card `#16171b`, accento argento `#e5e7eb`, hover bianco.
+* `script.js` - Moduli condivisi (nav, header, lightbox, tilt, reveal, form) + moduli per pagina, ognuno con guard sul proprio DOM.
+* `CNAME` / `.nojekyll` - Config GitHub Pages.
+* `.claudeignore` - Esclude le cartelle multimediali pesanti dalla scansione di Claude.
 
-## Organizzazione delle Sezioni
-1. **Showreel** (`#showreel`): Lettore video nativo in cima alla pagina.
-2. **Cinema** (`#cinema`): Griglia a 2 colonne per i cortometraggi. Carica i video YouTube in un iframe all'interno del Lightbox quando cliccati.
-   - *A Chess Move*: Cover `assets/covers/chessboard_cover.png` | ID YouTube `xAbP0Tb6KU0`
-   - *Terminal Dream*: Cover `assets/covers/beach_cover.png` | ID YouTube `LDUSHwS_K_g`
-3. **Fotografia** (`#photography`): Griglia a 3 colonne (desktop) con 10 foto ottimizzate in formato `.webp` (`assets/photography/1.webp` ... `10.webp`).
-4. **Chi Sono** (`#about`): Biografia dell'artista visivo (studente dell'Accademia di Belle Arti di Venezia) con focus su regia, montaggio, DoP, software 3D (Maya, Unreal, Gaea) ed editing (Adobe, DaVinci, Intelligenza Artificiale).
-5. **Contatti** (`#contact`): Form di contatto.
+## Sezioni ed Effetti
+1. **Sfondo globale**: `.bg-ambient` (chiaroscuro neutro che respira) + `.bg-pattern` (micro-punti argento in deriva continua, loop seamless su multipli della tile 28px) + `.film-grain` (rumore SVG animato).
+2. **Cinema Stage** (`#cinema`, index): sala minimale professionale.
+   - Platea `.stage-seats`: due file di sagome poltrone in CSS puro (gradienti ripetuti); una sottile linea bianca sul bordo superiore degli schienali simula la luce proiettata dallo schermo (tecnica: stessa sagoma duplicata e alzata di `--lift` in colore luce).
+   - Sipario `.stage-curtains`: due pannelli plissettati grigi con filo argento sul bordo interno; a riposo incorniciano lo schermo (translateX ±92%), al cambio corto si chiudono → cambio pellicola → si riaprono (sequenza JS a timeout: 780/200/820ms).
+   - Una card film alla volta (16:9, cover desaturate); click → iframe YouTube nel lightbox. Film: *A Chess Move* (`xAbP0Tb6KU0`), *Terminal Dream* (`LDUSHwS_K_g`).
+3. **Fotografia** (`photography.html`): vista a cartelle → zoom/fade → galleria "tunnel" 3D (scroll = volo, corridoio zig-zag con fuoco centrale, 3 canvas di polvere argento su piani di profondità). Pulsante "Torna ai Progetti".
+   - Progetti in `script.js` (oggetto `PROJECTS`): p1 = `assets/photography/1..10.webp`, p2 = `assets/photography/p2/1..6.webp`.
+   - Fallback: su touch/mobile/reduced-motion griglia standard.
+4. **Chi Sono** (`#about`, index): bio (Accademia di Belle Arti di Venezia — Nuove Tecnologie/Multimediale; regia, montaggio, DoP) + 6 skill card con tilt 3D.
+5. **Contatti** (`#contact`, index): form simulato (serve Formspree o simile per invii reali).
 
-## Logica Lightbox (`script.js`)
-* Raccoglie dinamicamente tutti gli elementi fotografici per abilitare la navigazione avanti/indietro con le frecce.
-* Se si clicca su un corto, disabilita le frecce di navigazione e inietta l'iframe di YouTube con autoplay attivo.
-* Quando il Lightbox viene chiuso, l'iframe viene svuotato per interrompere immediatamente la riproduzione audio/video.
+## Note Tecniche
+* Tutti gli effetti degradano su mobile/touch e rispettano `prefers-reduced-motion`.
+* I loop canvas/rAF si fermano quando le sezioni escono dallo schermo o la galleria è chiusa.
+* Il lightbox condiviso gestisce foto (frecce prev/next) e video YouTube (iframe svuotato alla chiusura).
+* Nuove foto: convertire in `.webp` ~1600px q82 (Pillow) per i limiti di GitHub Pages.
+* Attenzione: un reset dei file tracciati (`git checkout .`) ha già cancellato una volta il lavoro non committato — committare spesso.
 
 ## Comandi utili per lo sviluppo
-* Avviare server locale per test rapidi: `python -m http.server 8000` (visibile su http://localhost:8000)
-* Aggiornare il sito online: `git add .` -> `git commit -m "messaggio"` -> `git push origin main` (la pubblicazione avviene automaticamente tramite GitHub Actions).
+* Server locale: `python -m http.server 8000` (http://localhost:8000), oppure preview Claude via `.claude/launch.json` (porta 8347).
+* Deploy: `git add .` -> `git commit -m "messaggio"` -> `git push origin main` (la pubblicazione avviene automaticamente tramite GitHub Actions).

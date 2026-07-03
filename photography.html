@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Orlando Costi Visuals - Galleria fotografica immersiva: progetti fotografici in uno spazio 3D.">
+    <title>Fotografia | Orlando Costi Visuals</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="photography-page">
+    <div class="bg-ambient" aria-hidden="true"></div>
+    <div class="bg-pattern" aria-hidden="true"></div>
+    <div class="film-grain" aria-hidden="true"></div>
+
+    <header class="main-header">
+        <a href="index.html" class="logo">ORLANDO COSTI<span>VISUALS</span></a>
+        <nav class="nav-links">
+            <a href="index.html#cinema" class="nav-link">Cinema</a>
+            <a href="photography.html" class="nav-link active" aria-current="page">Fotografia</a>
+            <a href="index.html#about" class="nav-link">Chi Sono</a>
+            <a href="index.html#contact" class="nav-link">Contatti</a>
+        </nav>
+        <button class="mobile-menu-btn" aria-label="Menu" id="mobile-menu-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
+
+    <main class="tunnel-main">
+        <!-- View 1: project folder selection -->
+        <section class="project-select" id="project-select">
+            <div class="section-inner">
+                <div class="section-header text-center">
+                    <span class="section-label">GALLERIA</span>
+                    <h1 class="section-title">Progetti Fotografici</h1>
+                    <p class="section-subtitle">Scegli una collezione da esplorare.</p>
+                </div>
+                <div class="folder-grid">
+                    <article class="folder-card" data-project="p1" tabindex="0" role="button" aria-label="Apri Progetto Fotografico 1">
+                        <div class="folder-cover">
+                            <img src="assets/photography/1.webp" alt="Copertina Progetto Fotografico 1" loading="lazy">
+                        </div>
+                        <div class="folder-info">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <div>
+                                <h3>Progetto Fotografico #1</h3>
+                                <p>10 scatti &bull; Fotografia d'autore</p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="folder-card" data-project="p2" tabindex="0" role="button" aria-label="Apri Progetto Fotografico 2">
+                        <div class="folder-cover">
+                            <img src="assets/photography/p2/1.webp" alt="Copertina Progetto Fotografico 2" loading="lazy">
+                        </div>
+                        <div class="folder-info">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <div>
+                                <h3>Progetto Fotografico #2</h3>
+                                <p>6 scatti &bull; Fotografia d'autore</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 2: immersive spatial gallery (cards injected by JS per project) -->
+        <section class="tunnel-scene view-hidden" id="tunnel-scene" aria-label="Galleria fotografica">
+            <canvas class="dust-plane" id="dust-bg" aria-hidden="true"></canvas>
+            <canvas class="dust-plane" id="dust-mid" aria-hidden="true"></canvas>
+
+            <div class="tunnel-world" id="tunnel-world"></div>
+
+            <canvas class="dust-plane dust-fg" id="dust-fg" aria-hidden="true"></canvas>
+
+            <div class="tunnel-hud">
+                <div class="tunnel-heading">
+                    <span class="section-label">GALLERIA IMMERSIVA</span>
+                    <h1 class="section-title" id="tunnel-title">Fotografia</h1>
+                </div>
+                <button class="tunnel-back" id="tunnel-back">
+                    <i class="fa-solid fa-arrow-left"></i> Torna ai Progetti
+                </button>
+                <p class="tunnel-hint" id="tunnel-hint">Scorri per volare attraverso la galleria <i class="fa-solid fa-angles-down"></i></p>
+                <div class="tunnel-counter" id="tunnel-counter">01 / 10</div>
+                <div class="tunnel-progress" aria-hidden="true">
+                    <div class="tunnel-progress-fill" id="tunnel-progress-fill"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Invisible track: provides the scroll length that drives the flight -->
+        <div class="tunnel-track" id="tunnel-track" aria-hidden="true"></div>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox-modal">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Chiudi">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Precedente">&#10094;</button>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Successiva">&#10095;</button>
+        <div class="lightbox-content">
+            <img src="" alt="" id="lightbox-img" class="lightbox-media active">
+            <div id="lightbox-video-container" class="lightbox-media">
+                <iframe id="lightbox-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="Riproduzione video"></iframe>
+            </div>
+        </div>
+        <div class="lightbox-caption" id="lightbox-caption">Dettagli Immagine</div>
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 Orlando Costi Visuals. Tutti i diritti riservati.</p>
+        <p class="footer-sub">Sito ospitato su GitHub Pages &bull; orlandocostivisuals.com</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

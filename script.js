@@ -1,23 +1,35 @@
 /* ==========================================================================
    Orlando Costi Visuals - Interactive Scripts
+   Shared: nav, header, lightbox, tilt, reveal, contact form.
+   index.html: Cinema Stage (sipario che si apre/chiude al cambio corto).
+   photography.html: selezione progetti + galleria spaziale 3D.
+   Each module guards on its own DOM so the file is safe on both pages.
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Mobile Navigation Toggle
+    'use strict';
+
+    const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const FINE_POINTER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const pad2 = (n) => String(n).padStart(2, '0');
+
+    /* ----------------------------------------------------------------------
+       1. Mobile Navigation
+    ---------------------------------------------------------------------- */
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
-    const navLinksList = document.querySelectorAll('.nav-link');
 
     if (mobileMenuToggle && navLinks) {
         mobileMenuToggle.addEventListener('click', () => {
             mobileMenuToggle.classList.toggle('active');
             navLinks.classList.toggle('active');
-            
-            // Block body scroll
             document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
         });
 
-        navLinksList.forEach(link => {
+        navLinks.querySelectorAll('.nav-link').forEach((link) => {
             link.addEventListener('click', () => {
                 mobileMenuToggle.classList.remove('active');
                 navLinks.classList.remove('active');
@@ -26,230 +38,535 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Header Scroll Effect
+    /* ----------------------------------------------------------------------
+       2. Header Scroll State
+    ---------------------------------------------------------------------- */
     const header = document.querySelector('.main-header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.padding = '15px 40px';
-            header.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
-        } else {
-            header.style.padding = '30px 40px';
-            header.style.boxShadow = 'none';
-        }
-    });
+    if (header) {
+        const onHeaderScroll = () => header.classList.toggle('scrolled', window.scrollY > 50);
+        window.addEventListener('scroll', onHeaderScroll, { passive: true });
+        onHeaderScroll();
+    }
 
+    /* ----------------------------------------------------------------------
+       3. Lightbox (shared) — photos with prev/next, YouTube videos
+    ---------------------------------------------------------------------- */
+    const lightbox = (() => {
+        const modal = document.getElementById('lightbox-modal');
+        if (!modal) return null;
 
+        const closeBtn = document.getElementById('lightbox-close');
+        const prevBtn = document.getElementById('lightbox-prev');
+        const nextBtn = document.getElementById('lightbox-next');
+        const img = document.getElementById('lightbox-img');
+        const videoContainer = document.getElementById('lightbox-video-container');
+        const iframe = document.getElementById('lightbox-iframe');
+        const caption = document.getElementById('lightbox-caption');
 
-    // 4. Lightbox Modal for Photos & Videos
-    const lightboxModal = document.getElementById('lightbox-modal');
-    const lightboxClose = document.getElementById('lightbox-close');
-    const lightboxPrev = document.getElementById('lightbox-prev');
-    const lightboxNext = document.getElementById('lightbox-next');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxVideoContainer = document.getElementById('lightbox-video-container');
-    const lightboxIframe = document.getElementById('lightbox-iframe');
-    const lightboxCaption = document.getElementById('lightbox-caption');
+        let items = [];
+        let index = 0;
 
-    // Get only visible/filtered photo elements for navigation
-    let photoItems = [];
-    let currentPhotoIndex = 0;
+        const showItem = (i) => {
+            index = (i + items.length) % items.length;
+            const item = items[index];
+            img.src = item.src;
+            img.alt = item.alt;
+            caption.textContent = item.caption;
+        };
 
-    const updatePhotoItemsList = () => {
-        photoItems = Array.from(document.querySelectorAll('.project-card[data-category="photo"]'));
-    };
+        const open = (isPhoto) => {
+            img.classList.toggle('active', isPhoto);
+            videoContainer.classList.toggle('active', !isPhoto);
+            prevBtn.style.display = isPhoto && items.length > 1 ? 'block' : 'none';
+            nextBtn.style.display = isPhoto && items.length > 1 ? 'block' : 'none';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
 
-    const openLightbox = (type, data) => {
-        // Hide all media types initially
-        lightboxImg.classList.remove('active');
-        lightboxVideoContainer.classList.remove('active');
-        
-        // Show/hide navigation arrows
-        if (type === 'photo') {
-            lightboxPrev.style.display = 'block';
-            lightboxNext.style.display = 'block';
-            
-            // Set image source and caption
-            lightboxImg.src = data.src;
-            lightboxImg.alt = data.alt;
-            lightboxImg.classList.add('active');
-            lightboxCaption.textContent = data.caption;
-        } else if (type === 'video') {
-            lightboxPrev.style.display = 'none';
-            lightboxNext.style.display = 'none';
-            
-            // Set iframe src for YouTube video
-            lightboxIframe.src = `https://www.youtube.com/embed/${data.videoId}?autoplay=1`;
-            lightboxVideoContainer.classList.add('active');
-            lightboxCaption.textContent = data.title;
-        }
+        const close = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            iframe.src = ''; // stops YouTube playback
+        };
 
-        lightboxModal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Block background scroll
-    };
+        closeBtn.addEventListener('click', close);
+        prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showItem(index - 1); });
+        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showItem(index + 1); });
 
-    const closeLightbox = () => {
-        lightboxModal.classList.remove('active');
-        document.body.style.overflow = '';
-        // Stop YouTube video playback by clearing src
-        lightboxIframe.src = '';
-    };
-
-    // Attach click events to project cards
-    const projectCards = document.querySelectorAll('.project-card');
-    projectCards.forEach(card => {
-        card.addEventListener('click', (e) => {
-            const category = card.getAttribute('data-category');
-            
-            if (category === 'photo') {
-                updatePhotoItemsList();
-                const photoVisual = card.querySelector('.photo-item');
-                const photoSrc = photoVisual.getAttribute('data-src');
-                const photoAlt = card.querySelector('img').alt;
-                const photoTitle = card.querySelector('.project-name').textContent;
-                const photoDesc = card.querySelector('.project-description').textContent;
-                
-                // Find index in the current filtered list
-                currentPhotoIndex = photoItems.findIndex(item => item.querySelector('.photo-item').getAttribute('data-src') === photoSrc);
-                
-                openLightbox('photo', {
-                    src: photoSrc,
-                    alt: photoAlt,
-                    caption: `${photoTitle} — ${photoDesc}`
-                });
-            } else if (category === 'cinema') {
-                const videoTitle = card.querySelector('.project-name').textContent;
-                const videoId = card.getAttribute('data-video-id');
-                openLightbox('video', {
-                    title: videoTitle,
-                    videoId: videoId
-                });
-            }
-        });
-    });
-
-    // Navigation through photos
-    const showPrevPhoto = () => {
-        if (photoItems.length <= 1) return;
-        currentPhotoIndex = (currentPhotoIndex - 1 + photoItems.length) % photoItems.length;
-        
-        const prevCard = photoItems[currentPhotoIndex];
-        const visual = prevCard.querySelector('.photo-item');
-        const src = visual.getAttribute('data-src');
-        const alt = prevCard.querySelector('img').alt;
-        const title = prevCard.querySelector('.project-name').textContent;
-        const desc = prevCard.querySelector('.project-description').textContent;
-
-        lightboxImg.src = src;
-        lightboxImg.alt = alt;
-        lightboxCaption.textContent = `${title} — ${desc}`;
-    };
-
-    const showNextPhoto = () => {
-        if (photoItems.length <= 1) return;
-        currentPhotoIndex = (currentPhotoIndex + 1) % photoItems.length;
-        
-        const nextCard = photoItems[currentPhotoIndex];
-        const visual = nextCard.querySelector('.photo-item');
-        const src = visual.getAttribute('data-src');
-        const alt = nextCard.querySelector('img').alt;
-        const title = nextCard.querySelector('.project-name').textContent;
-        const desc = nextCard.querySelector('.project-description').textContent;
-
-        lightboxImg.src = src;
-        lightboxImg.alt = alt;
-        lightboxCaption.textContent = `${title} — ${desc}`;
-    };
-
-    if (lightboxClose) {
-        lightboxClose.addEventListener('click', closeLightbox);
-        lightboxPrev.addEventListener('click', (e) => {
-            e.stopPropagation();
-            showPrevPhoto();
-        });
-        lightboxNext.addEventListener('click', (e) => {
-            e.stopPropagation();
-            showNextPhoto();
-        });
-        
-        // Close on clicking the dark background
-        lightboxModal.addEventListener('click', (e) => {
-            if (e.target === lightboxModal || e.target.classList.contains('lightbox-content')) {
-                closeLightbox();
-            }
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal || e.target.classList.contains('lightbox-content')) close();
         });
 
-        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (!lightboxModal.classList.contains('active')) return;
-            
-            if (e.key === 'Escape') {
-                closeLightbox();
-            } else if (e.key === 'ArrowLeft' && lightboxImg.classList.contains('active')) {
-                showPrevPhoto();
-            } else if (e.key === 'ArrowRight' && lightboxImg.classList.contains('active')) {
-                showNextPhoto();
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'Escape') close();
+            else if (e.key === 'ArrowLeft' && img.classList.contains('active')) showItem(index - 1);
+            else if (e.key === 'ArrowRight' && img.classList.contains('active')) showItem(index + 1);
+        });
+
+        return {
+            openPhotos(list, startIndex = 0) {
+                items = list;
+                showItem(startIndex);
+                open(true);
+            },
+            openVideo(videoId, title) {
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                caption.textContent = title;
+                open(false);
+            },
+        };
+    })();
+
+    /* Helper: click + keyboard activation for card-like elements */
+    const onActivate = (el, handler) => {
+        el.addEventListener('click', handler);
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handler();
             }
+        });
+    };
+
+    /* ----------------------------------------------------------------------
+       4. Cinema Stage — sipario funzionale sul cambio corto (index.html)
+    ---------------------------------------------------------------------- */
+    (() => {
+        const stage = document.querySelector('.cinema-stage');
+        if (!stage) return;
+
+        const curtains = document.getElementById('stage-curtains');
+        const slides = Array.from(stage.querySelectorAll('.stage-slide'));
+        const prevBtn = document.getElementById('stage-prev');
+        const nextBtn = document.getElementById('stage-next');
+        const counterCurrent = document.getElementById('stage-current');
+        const counterTotal = document.getElementById('stage-total');
+
+        /* Tempi allineati alle transition CSS del sipario */
+        const CLOSE_MS = 780;  // chiusura (0.75s) + margine
+        const HOLD_MS = 200;   // pausa a sipario chiuso: cambio pellicola
+        const OPEN_MS = 820;   // riapertura
+
+        let current = 0;
+        let switching = false;
+
+        if (counterTotal) counterTotal.textContent = pad2(slides.length);
+
+        const updateCounter = () => {
+            if (counterCurrent) counterCurrent.textContent = pad2(current + 1);
+        };
+
+        const swapSlides = (from, to) => {
+            from.classList.remove('active');
+            to.classList.add('active');
+            updateCounter();
+        };
+
+        const switchTo = (nextIndex) => {
+            const target = (nextIndex + slides.length) % slides.length;
+            if (switching || target === current || slides.length < 2) return;
+
+            const cur = slides[current];
+            const next = slides[target];
+            current = target;
+
+            if (REDUCED_MOTION || !curtains) {
+                swapSlides(cur, next);
+                return;
+            }
+
+            switching = true;
+            curtains.classList.add('closed');           // il sipario si chiude
+            setTimeout(() => {
+                swapSlides(cur, next);                  // cambio a sipario chiuso
+                setTimeout(() => {
+                    curtains.classList.remove('closed'); // e si riapre
+                    setTimeout(() => { switching = false; }, OPEN_MS);
+                }, HOLD_MS);
+            }, CLOSE_MS);
+        };
+
+        if (prevBtn) prevBtn.addEventListener('click', () => switchTo(current - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => switchTo(current + 1));
+
+        /* Open film in the lightbox */
+        slides.forEach((slide) => {
+            onActivate(slide, () => {
+                if (lightbox) {
+                    lightbox.openVideo(
+                        slide.dataset.videoId,
+                        slide.querySelector('.project-name').textContent
+                    );
+                }
+            });
+        });
+    })();
+
+    /* ----------------------------------------------------------------------
+       5. Multi-Project Photography Gallery (photography.html)
+          View 1: folder selection → View 2: spatial 3D gallery per project
+    ---------------------------------------------------------------------- */
+    (() => {
+        const scene = document.getElementById('tunnel-scene');
+        if (!scene) return;
+
+        const world = document.getElementById('tunnel-world');
+        const track = document.getElementById('tunnel-track');
+        const select = document.getElementById('project-select');
+        const backBtn = document.getElementById('tunnel-back');
+        const titleEl = document.getElementById('tunnel-title');
+
+        const PROJECTS = {
+            p1: {
+                title: 'Progetto Fotografico #1',
+                photos: Array.from({ length: 10 }, (_, i) => `assets/photography/${i + 1}.webp`),
+            },
+            p2: {
+                title: 'Progetto Fotografico #2',
+                photos: Array.from({ length: 6 }, (_, i) => `assets/photography/p2/${i + 1}.webp`),
+            },
+        };
+        /* Zig-zag corridor template, cycled over however many photos exist */
+        const ZIGZAG = [[-12, 4], [13, -5], [-14, 6], [12, -7], [-11, 5],
+                        [14, -4], [-13, -6], [12, 6], [-12, -5], [13, 5]];
+
+        /* 3D flight only with a fine pointer, wide viewport and motion allowed;
+           otherwise both views degrade to readable grids via default CSS */
+        const CAPABLE_3D = FINE_POINTER && !REDUCED_MOTION && window.innerWidth >= 900;
+
+        const SPACING = 540;       // depth distance between photos (px of translateZ)
+        const CAM_START = -450;    // camera starts slightly behind the first photo
+        const TAIL = 650;          // flight continues a bit past the last photo
+        const FOCAL_Z = -300;      // depth at which a photo is "in focus" (large, centered)
+        const FOCAL_RANGE = 300;   // spread of the focal zone
+
+        let cards = [];
+        let offsets = [];
+        let camEnd = TAIL;
+        let cam = CAM_START;
+        let camTarget = CAM_START;
+        let lastCam = cam;
+        let mx = 0, my = 0, mxT = 0, myT = 0; // mouse, -1 … 1
+        let galleryOpen = false;
+
+        const buildGallery = (project) => {
+            world.innerHTML = '';
+            const items = project.photos.map((src, i) => ({
+                src,
+                alt: `${project.title} - Scatto ${i + 1}`,
+                caption: `${project.title} — Scatto #${i + 1}`,
+            }));
+
+            cards = project.photos.map((src, i) => {
+                const fig = document.createElement('figure');
+                fig.className = 'tunnel-card';
+                fig.tabIndex = 0;
+                fig.setAttribute('role', 'button');
+                fig.setAttribute('aria-label', `Apri scatto ${i + 1}`);
+
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = items[i].alt;
+                img.loading = 'lazy';
+
+                const cap = document.createElement('figcaption');
+                cap.textContent = `Scatto #${i + 1}`;
+
+                fig.append(img, cap);
+                onActivate(fig, () => lightbox && lightbox.openPhotos(items, i));
+                world.appendChild(fig);
+                return fig;
+            });
+
+            offsets = cards.map((_, i) => {
+                const [tx, ty] = ZIGZAG[i % ZIGZAG.length];
+                return { fx: tx / 100, fy: ty / 100 };
+            });
+            camEnd = (cards.length - 1) * SPACING + TAIL;
+            titleEl.textContent = project.title;
+        };
+
+        const readScroll = () => {
+            const max = Math.max(1, track.offsetHeight - window.innerHeight);
+            const progress = clamp(window.scrollY / max, 0, 1);
+            camTarget = CAM_START + progress * (camEnd - CAM_START);
+        };
+        window.addEventListener('scroll', () => {
+            if (galleryOpen && CAPABLE_3D) readScroll();
+        }, { passive: true });
+
+        scene.addEventListener('pointermove', (e) => {
+            mxT = (e.clientX / window.innerWidth) * 2 - 1;
+            myT = (e.clientY / window.innerHeight) * 2 - 1;
+        });
+        scene.addEventListener('pointerleave', () => {
+            mxT = 0;
+            myT = 0;
+        });
+
+        /* --- Multi-plane dust particles: 3 layered canvases --- */
+        const DPR = Math.min(window.devicePixelRatio || 1, 2);
+        const planes = [
+            { id: 'dust-bg',  count: 60, rMin: 0.4, rMax: 1.2, alpha: 0.30, flight: 0.06, mouse: 8,  drift: 0.05, blur: 0 },
+            { id: 'dust-mid', count: 42, rMin: 0.9, rMax: 2.0, alpha: 0.42, flight: 0.22, mouse: 18, drift: 0.09, blur: 0 },
+            { id: 'dust-fg',  count: 16, rMin: 2.2, rMax: 4.5, alpha: 0.5,  flight: 0.55, mouse: 34, drift: 0.14, blur: 9 },
+        ].map((cfg) => {
+            const canvas = document.getElementById(cfg.id);
+            return { ...cfg, canvas, ctx: canvas.getContext('2d'), particles: [] };
+        });
+
+        let vw = 0, vh = 0;
+
+        const spawnPlane = (plane) => {
+            plane.particles = Array.from({ length: plane.count }, () => ({
+                x: Math.random() * vw,
+                y: Math.random() * vh,
+                r: plane.rMin + Math.random() * (plane.rMax - plane.rMin),
+                vx: (Math.random() - 0.5) * plane.drift * 2,
+                vy: (Math.random() - 0.5) * plane.drift,
+                tw: Math.random() * Math.PI * 2,
+            }));
+        };
+
+        const resize = () => {
+            vw = window.innerWidth;
+            vh = window.innerHeight;
+            planes.forEach((plane) => {
+                plane.canvas.width = Math.floor(vw * DPR);
+                plane.canvas.height = Math.floor(vh * DPR);
+                plane.ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+                spawnPlane(plane);
+            });
+            readScroll();
+        };
+        window.addEventListener('resize', resize);
+
+        const drawPlanes = (flightVel) => {
+            planes.forEach((plane) => {
+                const { ctx } = plane;
+                ctx.clearRect(0, 0, vw, vh);
+                if (plane.blur) {
+                    ctx.shadowBlur = plane.blur;
+                    ctx.shadowColor = 'rgba(240, 240, 244, 0.7)';
+                }
+                for (const p of plane.particles) {
+                    p.tw += 0.02;
+                    p.x += p.vx;
+                    p.y += p.vy + flightVel * plane.flight;
+
+                    if (p.x < -12) p.x = vw + 12;
+                    else if (p.x > vw + 12) p.x = -12;
+                    if (p.y < -12) p.y = vh + 12;
+                    else if (p.y > vh + 12) p.y = -12;
+
+                    const alpha = plane.alpha * (0.65 + 0.35 * Math.sin(p.tw));
+                    ctx.beginPath();
+                    /* Layers shift in opposition to the cursor for depth feel */
+                    ctx.arc(p.x - mx * plane.mouse, p.y - my * plane.mouse, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(216, 218, 224, ${alpha.toFixed(3)})`; /* polvere argento */
+                    ctx.fill();
+                }
+                if (plane.blur) ctx.shadowBlur = 0;
+            });
+        };
+
+        /* --- HUD --- */
+        const hint = document.getElementById('tunnel-hint');
+        const counter = document.getElementById('tunnel-counter');
+        const progressFill = document.getElementById('tunnel-progress-fill');
+        let hintHidden = false;
+
+        const updateHud = () => {
+            const progress = (cam - CAM_START) / (camEnd - CAM_START);
+            progressFill.style.width = `${(progress * 100).toFixed(2)}%`;
+            const nearest = clamp(Math.round(cam / SPACING) + 1, 1, cards.length);
+            counter.textContent = `${pad2(nearest)} / ${pad2(cards.length)}`;
+            if (!hintHidden && progress > 0.02) {
+                hintHidden = true;
+                hint.classList.add('hidden');
+            }
+        };
+
+        /* --- Render pass: world tilt, card depths, dust, HUD --- */
+        const render = (flightVel) => {
+            /* World tilts in opposition to the cursor */
+            world.style.transform = `rotateX(${(my * 2.6).toFixed(2)}deg) rotateY(${(-mx * 3.4).toFixed(2)}deg)`;
+
+            cards.forEach((card, i) => {
+                const z = cam - i * SPACING; // <0 ahead of camera, >0 passed it
+                const depthRatio = clamp(1 + z / 1600, 0.15, 1); // near layers move more
+
+                /* Focal prominence: 1 at the focal plane, → 0 for neighbours.
+                   The focused photo pulls to the center and scales up;
+                   adjacent photos keep/exaggerate their zig-zag side offset. */
+                const focus = Math.exp(-((z - FOCAL_Z) ** 2) / (2 * FOCAL_RANGE * FOCAL_RANGE));
+                const spread = 1 + (1 - focus) * 0.35;
+                const x = offsets[i].fx * vw * (1 - focus * 0.8) * spread - mx * 46 * depthRatio;
+                const y = offsets[i].fy * vh * (1 - focus * 0.65) * spread - my * 34 * depthRatio;
+                const scale = 1 + focus * 0.16;
+
+                let alpha = clamp((z + 4800) / 1600, 0, 1); // fade-in from the far dark
+                let blur = 0;
+                if (z > 0) { // flying past the photo: quick scale-up + defocus
+                    alpha *= clamp(1 - z / 300, 0, 1);
+                    blur = z / 45;
+                }
+
+                card.style.transform =
+                    `translate(-50%, -50%) translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) ` +
+                    `scale(${scale.toFixed(3)})`;
+                card.style.opacity = alpha.toFixed(3);
+                card.style.filter = blur > 0.5 ? `blur(${blur.toFixed(1)}px)` : '';
+                card.style.pointerEvents = (z > -1900 && z < 140 && alpha > 0.25) ? 'auto' : 'none';
+            });
+
+            drawPlanes(flightVel);
+            updateHud();
+        };
+
+        /* --- Main flight loop (runs only while a gallery is open in 3D) --- */
+        let rafId = null;
+
+        const frame = () => {
+            cam = lerp(cam, camTarget, 0.085);
+            mx = lerp(mx, mxT, 0.06);
+            my = lerp(my, myT, 0.06);
+            const flightVel = cam - lastCam;
+            lastCam = cam;
+            render(flightVel);
+            rafId = galleryOpen ? requestAnimationFrame(frame) : null;
+        };
+
+        const startLoop = () => {
+            if (rafId === null) rafId = requestAnimationFrame(frame);
+        };
+        const stopLoop = () => {
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+        };
+
+        /* --- View switching: folder selection ⇄ immersive gallery --- */
+        const openProject = (id) => {
+            const project = PROJECTS[id];
+            if (!project || galleryOpen) return;
+
+            select.classList.add('zoom-out');
+            setTimeout(() => {
+                select.classList.remove('zoom-out');
+                select.classList.add('view-hidden');
+
+                buildGallery(project);
+                scene.classList.remove('view-hidden');
+                scene.classList.add('view-enter');
+                setTimeout(() => scene.classList.remove('view-enter'), 700);
+
+                galleryOpen = true;
+                hintHidden = false;
+                hint.classList.remove('hidden');
+                window.scrollTo(0, 0);
+
+                if (CAPABLE_3D) {
+                    document.body.classList.add('tunnel-3d');
+                    track.style.height = `${80 + cards.length * 62}vh`;
+                    cam = camTarget = lastCam = CAM_START;
+                    resize();   // canvases sized + particles spawned
+                    render(0);  // synchronous first paint
+                    startLoop();
+                }
+            }, REDUCED_MOTION ? 0 : 430);
+        };
+
+        const closeGallery = () => {
+            if (!galleryOpen) return;
+            galleryOpen = false;
+            stopLoop();
+            document.body.classList.remove('tunnel-3d');
+            scene.classList.add('view-hidden');
+            select.classList.remove('view-hidden');
+            select.classList.add('view-enter');
+            setTimeout(() => select.classList.remove('view-enter'), 700);
+            window.scrollTo(0, 0);
+        };
+
+        document.querySelectorAll('.folder-card').forEach((folder) => {
+            onActivate(folder, () => openProject(folder.dataset.project));
+        });
+        if (backBtn) backBtn.addEventListener('click', closeGallery);
+    })();
+
+    /* ----------------------------------------------------------------------
+       6. 3D Tilt (skill cards) — [data-tilt="maxDeg"]
+    ---------------------------------------------------------------------- */
+    if (FINE_POINTER && !REDUCED_MOTION) {
+        document.querySelectorAll('[data-tilt]').forEach((el) => {
+            const maxTilt = parseFloat(el.dataset.tilt) || 8;
+
+            el.addEventListener('pointermove', (e) => {
+                const r = el.getBoundingClientRect();
+                const px = (e.clientX - r.left) / r.width - 0.5;
+                const py = (e.clientY - r.top) / r.height - 0.5;
+                el.style.transform =
+                    `perspective(900px) rotateX(${(-py * maxTilt).toFixed(2)}deg) ` +
+                    `rotateY(${(px * maxTilt).toFixed(2)}deg) translateZ(10px)`;
+            });
+
+            el.addEventListener('pointerleave', () => {
+                el.style.transform = '';
+            });
         });
     }
 
-    // 5. Contact Form Submission (Simulation)
+    /* ----------------------------------------------------------------------
+       7. Contact Form (simulated — plug in Formspree/Netlify Forms for real)
+    ---------------------------------------------------------------------- */
     const contactForm = document.getElementById('contact-form');
+    const formStatus = document.getElementById('form-status');
+
     if (contactForm) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            const nameInput = document.getElementById('name').value;
+
+            const name = document.getElementById('name').value.trim();
             const submitBtn = contactForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
-            
+
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Invio in corso...';
-            submitBtn.style.opacity = '0.7';
+            submitBtn.textContent = 'Invio in corso…';
 
             setTimeout(() => {
-                submitBtn.style.backgroundColor = '#28a745';
-                submitBtn.style.borderColor = '#28a745';
-                submitBtn.style.color = '#fff';
-                submitBtn.textContent = 'Messaggio Inviato!';
-                
-                alert(`Grazie ${nameInput}! Il tuo messaggio è stato simulato correttamente. Configura un servizio come Formspree o Netlify Forms per riceverlo realmente.`);
-                
+                submitBtn.textContent = 'Messaggio Inviato ✓';
+                if (formStatus) {
+                    formStatus.textContent =
+                        `Grazie ${name}! (Demo: collega Formspree o un servizio simile per ricevere i messaggi.)`;
+                }
                 contactForm.reset();
-                
+
                 setTimeout(() => {
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
-                    submitBtn.style.backgroundColor = '';
-                    submitBtn.style.borderColor = '';
-                    submitBtn.style.color = '';
-                    submitBtn.style.opacity = '';
-                }, 3000);
-            }, 1200);
+                    if (formStatus) formStatus.textContent = '';
+                }, 4000);
+            }, 1000);
         });
     }
 
-    // 6. Subtle scroll reveal effect for sections
-    const sections = document.querySelectorAll('section');
-    const revealOnScroll = () => {
-        const triggerBottom = window.innerHeight * 0.85;
-        
-        sections.forEach(section => {
-            const sectionTop = section.getBoundingClientRect().top;
-            if (sectionTop < triggerBottom) {
-                section.style.opacity = '1';
-                section.style.transform = 'translateY(0)';
-            }
-        });
-    };
-    
-    sections.forEach(section => {
-        if (section.id !== 'hero') {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(30px)';
-            section.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
-        }
-    });
-
-    window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll(); // Trigger once on load
+    /* ----------------------------------------------------------------------
+       8. Scroll Reveal (index sections)
+    ---------------------------------------------------------------------- */
+    const revealSections = document.querySelectorAll('main > section:not(#hero):not(.tunnel-scene)');
+    if (revealSections.length && 'IntersectionObserver' in window && !REDUCED_MOTION) {
+        revealSections.forEach((s) => s.classList.add('reveal'));
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        revealSections.forEach((s) => revealObserver.observe(s));
+    }
 });
