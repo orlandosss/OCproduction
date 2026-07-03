@@ -1,0 +1,18 @@
+# Ignora le cartelle pesanti per graphify (così non richiede chiavi API LLM per scansionare immagini/video)
+assets/
+graphify-out/
+.git/
+.github/
+.agents/
+.system_generated/
+task.md
+walkthrough.md
+implementation_plan.md
+
+# Ignora file di testo semplici (che graphify classifica come "docs" e tenta di scansionare semanticamente con LLM)
+CNAME
+.nojekyll
+.claudeignore
+.graphifyignore
+README.md
+LICENSE

@@ -17,7 +17,7 @@ Dominio personalizzato: `orlandocostivisuals.com` (ospitato su GitHub Pages).
    - *A Chess Move*: Cover `assets/covers/chessboard_cover.png` | ID YouTube `xAbP0Tb6KU0`
    - *Terminal Dream*: Cover `assets/covers/beach_cover.png` | ID YouTube `LDUSHwS_K_g`
 3. **Fotografia** (`#photography`): Griglia a 3 colonne (desktop) con 10 foto ottimizzate in formato `.webp` (`assets/photography/1.webp` ... `10.webp`).
-4. **Chi Sono** (`#about`): Biografia e scheda servizi.
+4. **Chi Sono** (`#about`): Biografia dell'artista visivo (studente dell'Accademia di Belle Arti di Venezia) con focus su regia, montaggio, DoP, software 3D (Maya, Unreal, Gaea) ed editing (Adobe, DaVinci, Intelligenza Artificiale).
 5. **Contatti** (`#contact`): Form di contatto.
 
 ## Logica Lightbox (`script.js`)
