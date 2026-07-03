@@ -2,15 +2,14 @@
    Orlando Costi Visuals - Premium Minimalist Portfolio CSS
    ========================================================================== */
 
-/* 1. Design System Tokens */
 :root {
-    --bg-color: #08080a;
-    --bg-card: #121216;
-    --text-primary: #f5f5f7;
-    --text-secondary: #a0a0a5;
-    --text-muted: #6e6e73;
-    --accent: #d4af37; /* Elegante oro */
-    --accent-hover: #f3cf58;
+    --bg-color: #0c0d0f; /* Grigio carbone scuro */
+    --bg-card: #16171b; /* Grigio scuro per le card */
+    --text-primary: #f3f4f6; /* Grigio chiarissimo / argento chiaro */
+    --text-secondary: #9ca3af; /* Grigio medio */
+    --text-muted: #6b7280; /* Grigio spento */
+    --accent: #e5e7eb; /* Elegante argento metallico */
+    --accent-hover: #ffffff; /* Bianco puro al passaggio */
     --border-color: rgba(255, 255, 255, 0.08);
     --grid-color: rgba(255, 255, 255, 0.02);
     
