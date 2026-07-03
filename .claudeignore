@@ -1,0 +1,27 @@
+# File di configurazione per ottimizzare i token di Claude Code
+# Impedisce a Claude di scansionare file multimediali pesanti o cartelle di sistema inutili
+
+# Escludi file multimediali (immagini e video che Claude non può modificare, risparmiando migliaia di token)
+assets/photography/
+assets/reels/
+assets/covers/
+*.webp
+*.mp4
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.tif
+*.tiff
+
+# Escludi file di configurazione di sistema e Git
+.git/
+.github/
+.vscode/
+
+# Escludi file di log e temporanei
+*.log
+.system_generated/
+node_modules/
+dist/
+build/
