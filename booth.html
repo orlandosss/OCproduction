@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Orlando Costi Visuals - Cabina di proiezione 3D interattiva.">
+    <title>Orlando Costi Visuals | Cabina di Proiezione 3D</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #000000; /* Nero puro per le bande cinematografiche */
+            --card: #16171b;
+            --silver: #e5e7eb;
+            --muted: #9ca3af;
+            --line: rgba(229, 231, 235, 0.14);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000000; /* Nero puro */
+            color: var(--silver);
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        /* Canvas WebGL a tutto schermo */
+        #booth-canvas {
+            position: fixed;
+            inset: 0;
+            display: block;
+            touch-action: none; /* i gesti li gestiamo noi via pointer events */
+        }
+
+        /* ---- Overlay UI (HUD stile menu di gioco) ---- */
+        .hud {
+            position: fixed;
+            inset: 0;
+            pointer-events: none; /* il canvas riceve i pointer; i figli riattivano dove serve */
+            z-index: 10;
+        }
+
+        /* Brand in alto a sinistra */
+        .hud-logo {
+            position: absolute;
+            top: 28px;
+            left: 32px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            opacity: 0.85;
+        }
+        .hud-logo span { color: var(--muted); font-weight: 400; }
+
+        /* Suggerimento navigazione, in basso al centro, sparisce al primo drag */
+        .hud-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            transition: opacity 0.6s ease;
+            text-align: center;
+        }
+        .hud-hint.hidden { opacity: 0; }
+
+        /* Etichetta fluttuante che segue il POI in hover */
+        .poi-label {
+            position: absolute;
+            top: 0; left: 0;
+            transform: translate(-50%, -140%);
+            padding: 7px 14px;
+            background: rgba(12, 13, 15, 0.72);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            backdrop-filter: blur(6px);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .poi-label.visible { opacity: 1; }
+
+        /* Reticolo centrale sottile (feedback "prima persona") */
+        .reticle {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 6px; height: 6px;
+            margin: -3px 0 0 -3px;
+            border-radius: 50%;
+            background: rgba(229, 231, 235, 0.5);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .reticle.hot { transform: scale(2.4); background: #fff; }
+
+        /* Pannello contenuti che compare all'arrivo su un POI */
+        .content-panel {
+            position: absolute;
+            top: 50%;
+            right: 6vw;
+            transform: translateY(-50%) translateX(30px);
+            width: min(420px, 42vw);
+            max-height: 78vh;
+            overflow-y: auto;
+            padding: 34px 34px 38px;
+            background: rgba(22, 23, 27, 0.82);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            backdrop-filter: blur(14px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .content-panel.visible {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+            pointer-events: auto;
+        }
+        .content-panel .panel-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .content-panel h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            font-weight: 600;
+            margin: 8px 0 16px;
+            line-height: 1.15;
+        }
+        .content-panel p { color: #cbd0d8; line-height: 1.65; font-weight: 300; margin-bottom: 14px; }
+        .content-panel a { color: #fff; }
+
+        /* Pulsante "Torna alla Cabina" */
+        .back-btn {
+            position: absolute;
+            top: 26px;
+            right: 32px;
+            padding: 11px 22px;
+            background: rgba(22, 23, 27, 0.8);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--silver);
+            font-family: inherit;
+            font-size: 0.74rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.4s ease, transform 0.4s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+        .back-btn.visible { opacity: 1; transform: translateY(0); }
+        .back-btn:hover { background: rgba(229, 231, 235, 0.12); border-color: rgba(229, 231, 235, 0.4); }
+
+        /* Overlay di caricamento */
+        .loader {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: var(--bg);
+            z-index: 30;
+            transition: opacity 0.6s ease;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+        .loader.hidden { opacity: 0; pointer-events: none; }
+
+        /* ---- Hotspot interattivi (pallini pulsanti sulle zone) ---- */
+        .hotspot {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            background: none; border: none; padding: 14px;
+            cursor: pointer; pointer-events: auto;
+            display: none;
+        }
+        .hs-dot {
+            display: block;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: rgba(229, 231, 235, 0.9);
+            box-shadow: 0 0 0 0 rgba(229, 231, 235, 0.45);
+            animation: hs-pulse 2.2s ease-out infinite;
+        }
+        @keyframes hs-pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(229,231,235,0.45); }
+            70%  { box-shadow: 0 0 0 16px rgba(229,231,235,0); }
+            100% { box-shadow: 0 0 0 0 rgba(229,231,235,0); }
+        }
+        .hs-label {
+            position: absolute;
+            top: -8px; left: 50%;
+            transform: translate(-50%, -100%);
+            padding: 5px 12px;
+            background: rgba(12,13,15,0.78);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase;
+            white-space: nowrap; color: var(--silver);
+            opacity: 0; transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .hotspot:hover .hs-label { opacity: 1; }
+        .hotspot:hover .hs-dot { background: #fff; }
+
+        /* ---- Overlay scelta (corti / progetti foto) ---- */
+        .select-overlay {
+            position: absolute;
+            left: 50%; bottom: 7vh;
+            transform: translateX(-50%) translateY(24px);
+            text-align: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+        .select-overlay.visible { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+        .select-overlay h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600; font-size: 1.25rem;
+            margin-bottom: 18px; letter-spacing: 0.04em;
+        }
+        .select-cards { display: flex; gap: 18px; justify-content: center; }
+        .select-card {
+            width: 200px; padding: 0 0 12px;
+            background: rgba(22,23,27,0.85);
+            border: 1px solid var(--line); border-radius: 12px;
+            overflow: hidden; cursor: pointer;
+            color: var(--silver); font-family: inherit;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            backdrop-filter: blur(8px);
+        }
+        .select-card:hover { transform: translateY(-6px); border-color: rgba(229,231,235,0.5); }
+        .select-card img { width: 100%; height: 112px; object-fit: cover; display: block; margin-bottom: 10px; filter: grayscale(1) contrast(1.05); }
+        .select-card .card-ph { width: 100%; height: 112px; background: #202227; margin-bottom: 10px; }
+        .select-card .card-title { display: block; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.03em; }
+        .select-card .card-sub { display: block; font-size: 0.68rem; color: var(--muted); margin-top: 3px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+        /* ---- Overlay video ---- */
+        .video-overlay {
+            position: fixed; inset: 0;
+            display: grid; place-items: center;
+            background: rgba(5,6,8,0.92);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 20;
+        }
+        .video-overlay.visible { opacity: 1; pointer-events: auto; }
+        .video-overlay iframe {
+            width: min(1100px, 88vw);
+            aspect-ratio: 16 / 9;
+            border: 1px solid var(--line); border-radius: 10px;
+            background: #000;
+        }
+        .overlay-close {
+            position: absolute; top: 22px; right: 28px;
+            width: 44px; height: 44px;
+            background: rgba(22,23,27,0.8);
+            border: 1px solid var(--line); border-radius: 50%;
+            color: var(--silver); font-size: 1.2rem; cursor: pointer;
+        }
+        .overlay-close:hover { background: rgba(229,231,235,0.15); }
+
+        /* ---- Lightbox foto ---- */
+        .photo-lightbox {
+            position: fixed; inset: 0;
+            display: grid; place-items: center;
+            background: rgba(5,6,8,0.94);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.35s ease;
+            z-index: 21;
+        }
+        .photo-lightbox.visible { opacity: 1; pointer-events: auto; }
+        .photo-lightbox img {
+            max-width: 88vw; max-height: 84vh;
+            border: 1px solid var(--line); border-radius: 6px;
+        }
+        .lb-nav {
+            position: absolute; top: 50%;
+            transform: translateY(-50%);
+            width: 48px; height: 48px;
+            background: rgba(22,23,27,0.8);
+            border: 1px solid var(--line); border-radius: 50%;
+            color: var(--silver); font-size: 1.1rem; cursor: pointer;
+        }
+        .lb-nav:hover { background: rgba(229,231,235,0.15); }
+        .lb-prev { left: 26px; }
+        .lb-next { right: 26px; }
+
+        /* Suggerimento sul muro foto */
+        .wall-hint {
+            position: absolute;
+            bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--muted);
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        .wall-hint.visible { opacity: 1; }
+
+        /* Contenuti pannello: skill e contatti */
+        .skill-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+        .skill-chips span {
+            padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px;
+            font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #cbd0d8;
+        }
+        .contact-link { font-size: 1.05rem; text-decoration: none; border-bottom: 1px solid var(--line); }
+        .contact-alt { font-size: 0.85rem; color: var(--muted); }
+
+        /* Link di ritorno al sito classico */
+        .site-link {
+            position: absolute;
+            bottom: 30px;
+            left: 32px;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            pointer-events: auto;
+            border-bottom: 1px solid transparent;
+        }
+        .site-link:hover { color: var(--silver); border-color: var(--line); }
+
+        /* ---- Pannello di Controllo Effetti (FX) ---- */
+        .hud-fx-toggle {
+            position: absolute;
+            top: 28px;
+            right: 32px;
+            background: rgba(12, 13, 15, 0.4);
+            border: 1px solid var(--line);
+            color: var(--silver);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+        }
+        .hud-fx-toggle:hover {
+            background: var(--silver);
+            color: #000;
+            border-color: var(--silver);
+        }
+        .fx-panel {
+            position: absolute;
+            top: 80px;
+            right: 32px;
+            width: 320px;
+            background: rgba(22, 23, 27, 0.94);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 999;
+        }
+        .fx-panel.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .fx-group {
+            margin-bottom: 18px;
+        }
+        .fx-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .fx-value {
+            color: var(--silver);
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .fx-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.08);
+            height: 3px;
+            border-radius: 2px;
+            outline: none;
+        }
+        .fx-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--silver);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        .fx-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+        .fx-copy-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--silver);
+            color: var(--silver);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        .fx-copy-btn:hover {
+            background: var(--silver);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="booth-canvas"></canvas>
+
+    <div class="loader" id="loader">Avvio proiettore&hellip;</div>
+
+    <div class="hud" id="hud">
+        <div class="hud-logo">ORLANDO COSTI <span>VISUALS</span></div>
+
+        <div class="reticle" id="reticle"></div>
+        <div class="poi-label" id="poi-label"></div>
+
+        <button class="back-btn" id="back-btn">&larr; Torna alla Cabina</button>
+
+        <!-- I pannelli contenuto vengono generati/popolati da booth.js -->
+        <div class="content-panel" id="content-panel">
+            <span class="panel-label" id="panel-label">Sezione</span>
+            <h2 id="panel-title">Titolo</h2>
+            <div id="panel-body"></div>
+        </div>
+
+        <div class="hud-hint" id="hud-hint">Trascina per guardarti intorno &bull; Clicca un punto luminoso per esplorare</div>
+
+        <!-- Hotspot interattivi proiettati sui POI -->
+        <div id="hotspots"></div>
+
+        <!-- Scelta corti / progetti fotografici -->
+        <div class="select-overlay" id="select-overlay">
+            <h3 id="select-title">Scegli</h3>
+            <div class="select-cards" id="select-cards"></div>
+        </div>
+
+        <div class="wall-hint" id="wall-hint">Clicca una fotografia per ingrandirla</div>
+
+        <a href="index.html" class="site-link">Versione classica del sito</a>
+
+        <!-- FX Control Panel Toggle Button -->
+        <button class="hud-fx-toggle" id="fx-toggle" style="pointer-events: auto;">FX Panel</button>
+
+        <!-- FX Control Panel Card -->
+        <div class="fx-panel" id="fx-panel">
+            <h3 style="font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 8px;">Regolazioni Camera</h3>
+            
+            <div class="fx-group">
+                <div class="fx-header">Contrasto <span class="fx-value" id="val-contrast">1.28</span></div>
+                <input type="range" class="fx-slider" id="sld-contrast" min="0.5" max="2.0" step="0.01" value="1.28">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Esposizione <span class="fx-value" id="val-exposure">-0.30</span></div>
+                <input type="range" class="fx-slider" id="sld-exposure" min="-1.5" max="1.5" step="0.05" value="-0.30">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Fisheye <span class="fx-value" id="val-fisheye">0.00</span></div>
+                <input type="range" class="fx-slider" id="sld-fisheye" min="0.0" max="0.8" step="0.01" value="0.00">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Bloom <span class="fx-value" id="val-bloom">0.12</span></div>
+                <input type="range" class="fx-slider" id="sld-bloom" min="0.0" max="1.0" step="0.01" value="0.12">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Grana Pellicola <span class="fx-value" id="val-grain">0.14</span></div>
+                <input type="range" class="fx-slider" id="sld-grain" min="0.0" max="0.4" step="0.01" value="0.14">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Vignettatura <span class="fx-value" id="val-vignette">0.60</span></div>
+                <input type="range" class="fx-slider" id="sld-vignette" min="0.0" max="1.5" step="0.05" value="0.60">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Aberrazione Crom. <span class="fx-value" id="val-aberration">0.002</span></div>
+                <input type="range" class="fx-slider" id="sld-aberration" min="0.0" max="0.008" step="0.0005" value="0.002">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Luce Ambiente <span class="fx-value" id="val-ambient">0.52</span></div>
+                <input type="range" class="fx-slider" id="sld-ambient" min="0.0" max="1.5" step="0.02" value="0.52">
+            </div>
+
+            <div class="fx-group">
+                <div class="fx-header">Luce Taglio Proiettore <span class="fx-value" id="val-rim">8.5</span></div>
+                <input type="range" class="fx-slider" id="sld-rim" min="0.0" max="15.0" step="0.1" value="8.5">
+            </div>
+
+            <button class="fx-copy-btn" id="fx-copy-btn">Copia Configurazione</button>
+        </div>
+    </div>
+
+    <!-- Riproduzione corto -->
+    <div class="video-overlay" id="video-overlay">
+        <iframe id="video-frame" src="" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen title="Riproduzione cortometraggio"></iframe>
+        <button class="overlay-close" id="video-close" aria-label="Chiudi">&times;</button>
+    </div>
+
+    <!-- Lightbox fotografie -->
+    <div class="photo-lightbox" id="photo-lightbox">
+        <img src="" alt="" id="lightbox-img">
+        <button class="lb-nav lb-prev" id="lightbox-prev" aria-label="Precedente">&#10094;</button>
+        <button class="lb-nav lb-next" id="lightbox-next" aria-label="Successiva">&#10095;</button>
+        <button class="overlay-close" id="lightbox-close" aria-label="Chiudi">&times;</button>
+    </div>
+
+    <!-- Three.js + GSAP via importmap (nessun build step, compatibile GitHub Pages) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm"
+        }
+    }
+    </script>
+    <!-- Import con timestamp anti-cache: in sviluppo ogni apertura carica
+         sempre l'ultima versione di booth.js (niente hard-refresh manuale).
+         Per il deploy in produzione si può tornare a src="booth.js". -->
+    <script type="module">
+        import(`./booth.js?v=${Date.now()}`);
+    </script>
+</body>
+</html>

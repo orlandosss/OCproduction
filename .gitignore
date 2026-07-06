@@ -1,0 +1,6 @@
+# Artefatti intermedi del bake 3D — non serviti dal sito, solo lavorazione locale
+assets/booth/*.pre_sanitize
+assets/booth/booth_png_backup.glb
+assets/booth/booth_baked.glb
+assets/booth/booth_webp.glb
+assets/booth/booth_combined.webp
