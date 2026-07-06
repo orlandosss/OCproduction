@@ -47,6 +47,7 @@ const CONFIG = {
     SPOT_WATT: 2.2,      // fattore energia(W) -> intensità spot (abbassato: meno disco sul pavimento)
     AREA_WATT: 2.0,      // fattore energia(W) -> intensità area (nits)
     SPOT_SHADOWS: true,
+    DEBUG_LIGHTS: false, // true = mostra sfere + etichette col nome delle luci (taratura)
     SPOT_SOFT: 0.7,      // penombra minima: bordi delle pozze più morbidi
     SHADOW_RADIUS: 8,    // ombre più soffici
     // Debug: solo queste luci sono attive (null = tutte). Nomi come in Blender.
@@ -392,7 +393,7 @@ const look = { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0 };
 
 const pointer = new THREE.Vector2(-2, -2); // NDC; fuori schermo di default
 let dragging = false;
-let downX = 0, downY = 0, movedDist = 0;
+let downX = 0, downY = 0, movedDist = 0, lastX = 0, lastY = 0;
 
 canvas.addEventListener('pointerdown', (e) => {
     // In IDLE il drag ruota lo sguardo; in FOCUSED serve solo a rilevare il click
@@ -405,6 +406,7 @@ canvas.addEventListener('pointerdown', (e) => {
     // coordinate NDC così il raycast del tap-to-select funziona anche su mobile.
     pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    lastX = e.clientX; lastY = e.clientY; // base per il delta del drag
     try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
 });
 
@@ -414,14 +416,16 @@ canvas.addEventListener('pointermove', (e) => {
     pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
     if (dragging && state === STATE.IDLE) {
-        const dx = e.movementX || 0;
-        const dy = e.movementY || 0;
+        // Delta calcolato dalle coordinate (movementX/Y è inaffidabile su touch).
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
         movedDist += Math.abs(dx) + Math.abs(dy);
         look.targetYaw -= dx * CONFIG.LOOK_SENSITIVITY;
         look.targetPitch -= dy * CONFIG.LOOK_SENSITIVITY;
         look.targetPitch = THREE.MathUtils.clamp(look.targetPitch, -CONFIG.MAX_PITCH, CONFIG.MAX_PITCH);
         hint.classList.add('hidden');
     }
+    lastX = e.clientX; lastY = e.clientY;
 });
 
 function endDrag(e) {
@@ -438,16 +442,8 @@ function endDrag(e) {
 }
 canvas.addEventListener('pointerup', endDrag);
 canvas.addEventListener('pointercancel', endDrag);
-
-// Gyro opzionale su mobile (senza permessi iOS espliciti resta un no-op).
-if (!FINE_POINTER && window.DeviceOrientationEvent) {
-    window.addEventListener('deviceorientation', (e) => {
-        if (state !== STATE.IDLE || e.beta == null || e.gamma == null) return;
-        look.targetYaw = THREE.MathUtils.degToRad(-e.gamma) * 1.5;
-        look.targetPitch = THREE.MathUtils.clamp(
-            THREE.MathUtils.degToRad(e.beta - 90), -CONFIG.MAX_PITCH, CONFIG.MAX_PITCH);
-    }, true);
-}
+// Nota: niente giroscopio. Sia su desktop che su telefono ci si guarda intorno
+// trascinando (mouse/dito) — vedi il calcolo del delta in pointermove.
 
 /* ----------------------------------------------------------------------
    4. Raycasting: hover + selezione
@@ -1098,31 +1094,27 @@ function buildBlenderLights(root) {
         const pos = new V(...d.pos);
         const tgt = new V(...d.pos).add(new V(...d.dir)); // punto guardato lungo la direzione
 
-        // Sfera rossa per individuare la luce in 3D
-        const debugSphere = new THREE.Mesh(
-            new THREE.SphereGeometry(0.04, 8, 8),
-            new THREE.MeshBasicMaterial({ color: 0xff3333, wireframe: true, depthTest: false })
-        );
-        debugSphere.position.copy(pos);
-        scene.add(debugSphere);
+        // Aiuti visivi per tarare le luci (sfera + etichetta col nome). Spenti
+        // di default: si riattivano con CONFIG.DEBUG_LIGHTS = true.
+        if (CONFIG.DEBUG_LIGHTS) {
+            const debugSphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.04, 8, 8),
+                new THREE.MeshBasicMaterial({ color: 0xff3333, wireframe: true, depthTest: false })
+            );
+            debugSphere.position.copy(pos);
+            scene.add(debugSphere);
 
-        // Label HTML fluttuante
-        const div = document.createElement('div');
-        div.className = 'light-debug-label';
-        div.style.position = 'absolute';
-        div.style.background = 'rgba(255, 51, 51, 0.9)';
-        div.style.color = '#fff';
-        div.style.padding = '3px 8px';
-        div.style.borderRadius = '4px';
-        div.style.fontSize = '10px';
-        div.style.fontFamily = 'monospace';
-        div.style.pointerEvents = 'none';
-        div.style.zIndex = '9999';
-        div.textContent = `[L${index}] ${d.name}`;
-        document.body.appendChild(div);
+            const div = document.createElement('div');
+            div.className = 'light-debug-label';
+            div.style.cssText = 'position:absolute;background:rgba(255,51,51,0.9);color:#fff;'
+                + 'padding:3px 8px;border-radius:4px;font-size:10px;font-family:monospace;'
+                + 'pointer-events:none;z-index:9999;';
+            div.textContent = `[L${index}] ${d.name}`;
+            document.body.appendChild(div);
 
-        d.debugEl = div;
-        d.debugSphere = debugSphere;
+            d.debugEl = div;
+            d.debugSphere = debugSphere;
+        }
 
         if (d.type === 'SPOT') {
             const intensity = d.energy * CONFIG.SPOT_WATT * CONFIG.LIGHT_MULT;
@@ -1519,4 +1511,6 @@ function setupFXPanel() {
     });
 }
 
-setupFXPanel();
+// Pannello FX rimosso dalla pagina; la funzione resta disponibile ma non viene
+// invocata. Per riattivarlo basta ripristinare il suo DOM in booth.html.
+// setupFXPanel();
