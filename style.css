@@ -567,13 +567,11 @@ section {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.8;
-    filter: saturate(0.25); /* fotogrammi quasi monocromi, coerenti con la palette */
+    opacity: 1;          /* cover dei corti a colori pieni, non monocrome */
     transition: var(--transition-smooth);
 }
 
 .stage-slide:hover .stage-visual img {
-    opacity: 0.95;
     transform: scale(1.02);
 }
 
