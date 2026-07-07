@@ -640,43 +640,82 @@ section {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 52%;
-    background:
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 14%),
+    width: 54%;
+    background-color: #131419;
+    /* Velluto grigio a pieghe morbide: valli scure, creste che prendono luce */
+    background-image:
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent 12%, transparent 88%, rgba(0, 0, 0, 0.4)),
         repeating-linear-gradient(90deg,
-            #1a1b1e 0px, #232429 11px, #121316 24px, #1d1e22 36px, #161719 46px);
-    box-shadow: 0 0 46px rgba(0, 0, 0, 0.7);
-    transition: transform 0.75s cubic-bezier(0.77, 0, 0.18, 1);
+            rgba(0, 0, 0, 0.64) 0px,
+            rgba(150, 154, 163, 0.22) 13px,
+            rgba(0, 0, 0, 0.66) 27px,
+            rgba(108, 112, 120, 0.12) 41px);
+    box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.6), 0 0 55px rgba(0, 0, 0, 0.8);
+    /* Peso teatrale: parte lenta, accelera, si assesta al centro */
+    transition: transform 0.95s cubic-bezier(0.55, 0.03, 0.18, 1);
     will-change: transform;
 }
 
-/* Bordo interno: filo argento che prende la luce dello schermo */
-.curtain::after {
+/* Filo argento sul bordo interno (luce dello schermo) */
+.curtain::before {
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
     width: 2px;
+    z-index: 2;
     background: linear-gradient(to bottom,
-        rgba(243, 244, 246, 0.35), rgba(243, 244, 246, 0.08) 70%, transparent);
+        rgba(243, 244, 246, 0.5), rgba(243, 244, 246, 0.1) 70%, transparent);
+}
+/* Alone morbido dello schermo sul lembo interno */
+.curtain::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 44px;
 }
 
 .curtain-left {
     left: 0;
-    transform: translateX(-92%); /* a riposo un lembo resta a incorniciare */
+    transform-origin: left center;
+    transform: translateX(-89%) scaleX(0.78); /* a riposo: raccolta a sinistra */
 }
-.curtain-left::after { right: 0; }
+.curtain-left::before { right: 0; }
+.curtain-left::after  { right: 0; background: linear-gradient(90deg, transparent, rgba(243, 244, 246, 0.1)); }
 
 .curtain-right {
     right: 0;
-    transform: translateX(92%);
-    transition-delay: 0.04s;
+    transform-origin: right center;
+    transform: translateX(89%) scaleX(0.78);
+    transition-delay: 0.06s; /* leggero sfasamento: più vivo */
 }
-.curtain-right::after { left: 0; }
+.curtain-right::before { left: 0; }
+.curtain-right::after  { left: 0; background: linear-gradient(270deg, transparent, rgba(243, 244, 246, 0.1)); }
 
+/* Chiuse: le pieghe si distendono (scaleX 1) e coprono lo schermo con lieve sovrapposizione */
 .stage-curtains.closed .curtain-left,
 .stage-curtains.closed .curtain-right {
-    transform: translateX(0);
+    transform: translateX(0) scaleX(1);
+}
+
+/* Mantovana (pelmet) fissa in alto: incornicia il palco */
+.stage-valance {
+    position: absolute;
+    top: 0;
+    left: -2%;
+    right: -2%;
+    height: 13%;
+    z-index: 3;
+    background-color: #101115;
+    background-image:
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 60%),
+        repeating-linear-gradient(90deg,
+            rgba(0, 0, 0, 0.6) 0px,
+            rgba(150, 154, 163, 0.18) 17px,
+            rgba(0, 0, 0, 0.62) 35px);
+    border-bottom: 1px solid rgba(243, 244, 246, 0.14);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
 }
 
 /* --- Controlli ------------------------------------------------------------ */

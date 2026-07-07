@@ -152,8 +152,8 @@ const SECTIONS = {
         color: 0xe6b4f8,
         body: `
             <p>Per collaborazioni, preventivi o anche solo per parlare di un'idea:</p>
-            <p><a class="contact-link" href="mailto:info@orlandocostivisuals.com">
-               &#9993;&nbsp; info@orlandocostivisuals.com</a></p>
+            <p><a class="contact-link" href="mailto:orlando05122005@gmail.com">
+               &#9993;&nbsp; orlando05122005@gmail.com</a></p>
             <p class="contact-alt">Oppure visita la <a href="index.html">versione classica del sito</a>
                per il modulo di contatto completo.</p>`,
     },

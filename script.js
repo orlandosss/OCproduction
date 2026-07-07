@@ -143,10 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const counterCurrent = document.getElementById('stage-current');
         const counterTotal = document.getElementById('stage-total');
 
-        /* Tempi allineati alle transition CSS del sipario */
-        const CLOSE_MS = 780;  // chiusura (0.75s) + margine
-        const HOLD_MS = 200;   // pausa a sipario chiuso: cambio pellicola
-        const OPEN_MS = 820;   // riapertura
+        /* Tempi allineati alle transition CSS del sipario (0.95s + sfasamento) */
+        const CLOSE_MS = 1020; // chiusura (0.95s) + sfasamento destra + margine
+        const HOLD_MS = 260;   // pausa a sipario chiuso: cambio pellicola
+        const OPEN_MS = 1020;  // riapertura
 
         let current = 0;
         let switching = false;
