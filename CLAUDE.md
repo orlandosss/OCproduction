@@ -7,7 +7,7 @@ Dominio personalizzato: `orlandocostivisuals.com` (ospitato su GitHub Pages).
 * `index.html` - Home: Hero, Cinema Stage, Chi Sono & Skills, Contatti.
 * `photography.html` - Pagina fotografia: selezione progetti a cartelle + galleria spaziale 3D.
 * `alt.html` - Esperimento "organico" standalone (CSS/JS inline), non linkato dal sito.
-* `style.css` - Foglio di stile unico per index+photography. Palette grigio/argento: bg `#0c0d0f`, card `#16171b`, accento argento `#e5e7eb`, hover bianco.
+* `style.css` - Foglio di stile unico per index+photography. Estetica **costruttivista** (nero/rosso/carta): bg `#0c0b0a`, card `#17110f`, accento rosso `#e2231a`, testo carta `#f2ede1`. Display condensato `Oswald` (maiuscolo) per titoli/etichette, geometrie (cerchi/barre rosse), spigoli netti (border-radius 0) e ombre "fuori registro". Versionato via `style.css?v=N` in `<link>` per aggirare la cache (attuale: v5).
 * `script.js` - Moduli condivisi (nav, header, lightbox, tilt, reveal, form) + moduli per pagina, ognuno con guard sul proprio DOM.
 * `CNAME` / `.nojekyll` - Config GitHub Pages.
 * `.claudeignore` - Esclude le cartelle multimediali pesanti dalla scansione di Claude.
