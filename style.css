@@ -682,39 +682,23 @@ section {
     top: 0;
     bottom: 0;
     width: 54%;
-    background-color: #131419;
-    /* Velluto grigio a pieghe morbide: valli scure, creste che prendono luce */
-    background-image:
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent 12%, transparent 88%, rgba(0, 0, 0, 0.4)),
-        repeating-linear-gradient(90deg,
-            rgba(0, 0, 0, 0.64) 0px,
-            rgba(150, 154, 163, 0.22) 13px,
-            rgba(0, 0, 0, 0.66) 27px,
-            rgba(108, 112, 120, 0.12) 41px);
-    box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.6), 0 0 55px rgba(0, 0, 0, 0.8);
-    /* Peso teatrale: parte lenta, accelera, si assesta al centro */
+    /* Pieghe PIATTE e grafiche: bande nette alternate, nessuna simulazione 3D */
+    background-image: repeating-linear-gradient(90deg,
+        #100e0d 0px, #100e0d 22px,
+        #26100e 22px, #26100e 44px);
     transition: transform 0.95s cubic-bezier(0.55, 0.03, 0.18, 1);
     will-change: transform;
 }
 
-/* Filo argento sul bordo interno (luce dello schermo) */
+/* Bordo interno: linea rossa netta (accento costruttivista) */
 .curtain::before {
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 2px;
+    width: 4px;
     z-index: 2;
-    background: linear-gradient(to bottom,
-        rgba(243, 244, 246, 0.5), rgba(243, 244, 246, 0.1) 70%, transparent);
-}
-/* Alone morbido dello schermo sul lembo interno */
-.curtain::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 44px;
+    background: var(--accent);
 }
 
 .curtain-left {
@@ -723,7 +707,6 @@ section {
     transform: translateX(-89%) scaleX(0.78); /* a riposo: raccolta a sinistra */
 }
 .curtain-left::before { right: 0; }
-.curtain-left::after  { right: 0; background: linear-gradient(90deg, transparent, rgba(243, 244, 246, 0.1)); }
 
 .curtain-right {
     right: 0;
@@ -732,7 +715,6 @@ section {
     transition-delay: 0.06s; /* leggero sfasamento: più vivo */
 }
 .curtain-right::before { left: 0; }
-.curtain-right::after  { left: 0; background: linear-gradient(270deg, transparent, rgba(243, 244, 246, 0.1)); }
 
 /* Chiuse: le pieghe si distendono (scaleX 1) e coprono lo schermo con lieve sovrapposizione */
 .stage-curtains.closed .curtain-left,
@@ -748,15 +730,11 @@ section {
     right: -2%;
     height: 13%;
     z-index: 3;
-    background-color: #101115;
-    background-image:
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 60%),
-        repeating-linear-gradient(90deg,
-            rgba(0, 0, 0, 0.6) 0px,
-            rgba(150, 154, 163, 0.18) 17px,
-            rgba(0, 0, 0, 0.62) 35px);
-    border-bottom: 1px solid rgba(243, 244, 246, 0.14);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+    /* Mantovana piatta: stesse bande grafiche + filo rosso in basso */
+    background-image: repeating-linear-gradient(90deg,
+        #100e0d 0px, #100e0d 22px,
+        #26100e 22px, #26100e 44px);
+    border-bottom: 3px solid var(--accent);
 }
 
 /* --- Controlli ------------------------------------------------------------ */
