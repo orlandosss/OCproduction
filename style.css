@@ -682,23 +682,25 @@ section {
     top: 0;
     bottom: 0;
     width: 54%;
-    /* Pieghe PIATTE e grafiche: bande nette alternate, nessuna simulazione 3D */
+    /* Velluto ROSSO: pieghe rese dal colore — rosso acceso sulle creste
+       illuminate, rosso scuro nelle valli in ombra (dark→light→dark). */
     background-image: repeating-linear-gradient(90deg,
-        #100e0d 0px, #100e0d 22px,
-        #26100e 22px, #26100e 44px);
+        #3a0e0a 0px,     /* valle in ombra */
+        #cf3323 13px,    /* cresta illuminata */
+        #3a0e0a 26px);   /* valle in ombra */
     transition: transform 0.95s cubic-bezier(0.55, 0.03, 0.18, 1);
     will-change: transform;
 }
 
-/* Bordo interno: linea rossa netta (accento costruttivista) */
+/* Bordo interno: sottile riga di luce dove le tende si incontrano */
 .curtain::before {
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 4px;
+    width: 3px;
     z-index: 2;
-    background: var(--accent);
+    background: #f0503f; /* rosso chiaro: luce sul lembo frontale */
 }
 
 .curtain-left {
@@ -730,10 +732,11 @@ section {
     right: -2%;
     height: 13%;
     z-index: 3;
-    /* Mantovana piatta: stesse bande grafiche + filo rosso in basso */
+    /* Mantovana: stesso velluto rosso a pieghe + filo rosso acceso in basso */
     background-image: repeating-linear-gradient(90deg,
-        #100e0d 0px, #100e0d 22px,
-        #26100e 22px, #26100e 44px);
+        #3a0e0a 0px,
+        #cf3323 13px,
+        #3a0e0a 26px);
     border-bottom: 3px solid var(--accent);
 }
 
