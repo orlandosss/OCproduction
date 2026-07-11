@@ -520,13 +520,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ----------------------------------------------------------------------
-       7. Contact Form (simulated — plug in Formspree/Netlify Forms for real)
+       7. Contact Form — invio reale via Web3Forms (nessun backend richiesto)
     ---------------------------------------------------------------------- */
     const contactForm = document.getElementById('contact-form');
     const formStatus = document.getElementById('form-status');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const name = document.getElementById('name').value.trim();
@@ -535,21 +535,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'Invio in corso…';
+            if (formStatus) { formStatus.textContent = ''; formStatus.classList.remove('error'); }
 
-            setTimeout(() => {
-                submitBtn.textContent = 'Messaggio Inviato ✓';
-                if (formStatus) {
-                    formStatus.textContent =
-                        `Grazie ${name}! (Demo: collega Formspree o un servizio simile per ricevere i messaggi.)`;
+            try {
+                const res = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' },
+                    body: new FormData(contactForm),
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    submitBtn.textContent = 'Messaggio Inviato ✓';
+                    if (formStatus) formStatus.textContent = `Grazie ${name}! Ti risponderò al più presto.`;
+                    contactForm.reset();
+                } else {
+                    throw new Error(data.message || 'Invio non riuscito');
                 }
-                contactForm.reset();
-
+            } catch (err) {
+                if (formStatus) {
+                    formStatus.classList.add('error');
+                    formStatus.textContent = 'Invio non riuscito. Riprova, oppure scrivimi a orlando05122005@gmail.com.';
+                }
+            } finally {
                 setTimeout(() => {
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
-                    if (formStatus) formStatus.textContent = '';
                 }, 4000);
-            }, 1000);
+            }
         });
     }
 

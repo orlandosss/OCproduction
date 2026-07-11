@@ -1360,9 +1360,11 @@ a.contact-method-item:hover {
 
 .form-status {
     min-height: 1.4em;
+    margin-top: 12px;
     font-size: 0.9rem;
-    color: var(--accent);
+    color: var(--text-secondary); /* messaggio di conferma */
 }
+.form-status.error { color: var(--accent); } /* errore in rosso */
 
 /* ==========================================================================
    11. Lightbox Modal
